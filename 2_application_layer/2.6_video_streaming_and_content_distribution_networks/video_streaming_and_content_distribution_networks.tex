@@ -1,0 +1,13 @@
+\subsection{Video Streaming and Content Distribution Networks}
+
+
+\subsubsection{CDNs typically adopt one of two different server placement philosophies. Name and briefly describe them. (R24)}
+\begin{itemize}
+    \item \textbf{Enter Deep:} Deploy server clusters in access ISPs all over the world, with the aim of getting close to end users. This improves user-perceived delay and throughput by reducing the number of links between the user and the CDN server, which sends the content.
+    \item \textbf{Bring Home:} Bringing the ISPs home by building large clusters at a smaller number of sites. Instead of getting inside the access ISPs, the CDNs using this strategy place their clusters at IXPs (Internet Exchange Points). This results in lower maintenance and management overhead than enter deep, but possible at an expense of higher delays and lower throughput to end users.
+\end{itemize}
+
+
+\subsubsection{Besides network-related considerations such as delay, loss, and bandwidth performance, there are other important factors that go into designing a CDN server selection strategy. What are they? (R25)}
+
+ISP delivery cost. Clusters might be chosen so that content is distributed on the cheapest route of links.

@@ -1,0 +1,39 @@
+\subsection{Connection-Oriented Transport: TCP}
+
+\subsubsection{True or false? (R14)}
+
+\textbf{a. Host A is sending Host B a large file over a TCP connection. Assume Host B has no data to send Host A. Host B will not send acknowledgments to Host A because Host B cannot piggyback the acknowledgments on data.} \\
+False, in TCP the receiver of data will always send an acknowledgment whether it can piggyback on data or not. \\
+\\
+\textbf{b. The size of the TCP \texttt{rwnd} never changes throughout the duration of the connection.} \\
+False, \texttt{rwnd} is the receiver window which indicates how much space there is left in the buffer of the receiver, and this changes each time data is received from IP or read from the buffer to the application process. \\
+\\
+\textbf{c. Suppose Host A is sending Host B a large file over a TCP connection. The number of unacknowledged bytes that A sends cannot exceed the size of the receive buffer.} \\
+True, TCP ensures that $\texttt{LastByteSent} - \texttt{LastByteAcked} \leq \texttt{rwnd}$,i.e. that the size of unacknowledged bytes does not exceed the receive window. Since the receive window \texttt{rwnd} must be smaller than the receiver buffer then it follows that unacknowledged bytes also cannot exceed the size of the receive buffer. \\
+\\
+\textbf{d. Suppose Host A is sending a large file to Host B over a TCP connection. If the sequence number for a segment of this connection is $m$, then the sequence number for the subsequent segment will necessarily be $m + 1$.} \\
+False, the sequence number is not incremented 1 for each segment in TCP, it is incremented by the byte-size of the segment. \\
+\\
+\textbf{e. The TCP segment has a field in its header for \texttt{rwnd}.} \\
+True, this is to let the sender throttle its sending rate to not exceed the receiver buffer. \\
+\\
+\textbf{f. Suppose that the last \texttt{SampleRTT} in a TCP connection is equal to 1 sec. The current value of \texttt{TimeoutInterval} for the connection will necessarily be $\geq$ 1 sec.} \\
+False, it is possible for the \texttt{TimeoutInterval} to be smaller than the last \texttt{SampleRTT} since \texttt{TimeoutInterval} is calculated on the basis of the exponential weighted moving average of the last values of \texttt{SampleRTT} along with the value for the variation of these. Therefore if the many previous values for \texttt{TimeoutInterval} have been much smaller than 1 sec and their variations have been low, then it is likely that \texttt{TimeoutInterval} is lower than 1 sec even if the most recent \texttt{SampleRTT} is 1 sec. \\
+\\
+\textbf{g. Suppose Host A sends one segment with sequence number 38 and 4 bytes of data over a TCP connection to Host B. In this same segment, the acknowledgment number is necessarily 42.} \\
+False, the sequence number and acknowledgment numbers are picked randomly at the initiation of the connection and are therefore not related. So it is not possible to infer the acknowledgment based on the sequence number, one needs the previous acknowledgment number for this.
+
+
+\subsubsection{Suppose Host A sends two TCP segments back to back to Host B over a TCP connection. The first segment has sequence number 90; the second has sequence number 110. (R15)}
+
+\textbf{a. How much data is in the first segment?} \\
+Since sequence numbers are incremented by the size of the segment we can infer that the segment must be $110 - 90 = 20$ bytes. \\
+\\
+\textbf{b. Suppose that the first segment is lost but the second segment arrives at B. In the acknowledgment that Host B sends to Host A, what will be the acknowledgment number?} \\
+Since the first packet is lost B will send acknowledgment number equal to the sequence number of the last first to ask for a retransmission. Therefore the acknowledgment number will be 90.
+
+\subsubsection{Consider the Telnet example discussed in Section 3.5. A few seconds after the user types the letter 'C,' the user types the letter 'R.' After typing the letter 'R,' how many segments are sent, and what is put in the sequence number and acknowledgment fields of the segments? (R16)}
+
+As in figure 3.31 when the user types 'C' a segment is sent with Seq=42 and ACK=79. When the other host receives this segment it responds with a segment echoing the data 'C' and with Seq=79 and ACK=43. If the user types 'R' only a few seconds after typing 'C' then we assume that 'R' is typed before receiving this echoed 'C'. So when this happens the user responds by acknowledging the echoed 'C' while sending 'R' in a segment with Seq=43 and ACK=80. The other host responds with 'R' in a segment with Seq=80 and ACK=44. Finally when receiving this echoed 'R' the user sends an acknowledgment with Seq=44 and ACK = 81. \\
+\\
+Counting the segments right after typing 'R' we have that 3 segments are sent, 1st by user sending 'R' while acknowledging echoed 'C', 2nd by the other host acknowledging 'R' and sending an echo and third the user acknowledging the echoed 'R'.

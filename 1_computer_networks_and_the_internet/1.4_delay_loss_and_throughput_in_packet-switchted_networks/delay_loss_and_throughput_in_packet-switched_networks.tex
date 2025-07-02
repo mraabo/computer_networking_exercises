@@ -1,0 +1,90 @@
+\subsection{Delay, Loss and Throughput in Packet-Switched Networks}
+
+\subsubsection{Consider sending a packet from a source host to a destination host over a fixed route. List the delay components in the end-to-end delay. Which of these delays are constant and which are variable? (R16)}
+\begin{itemize}
+    \item \textbf{Processing delay:} The time required to examine the packet's header and determine where to direct the packet. Constant.
+    \item \textbf{Queuing delay:} The time the packet spends waiting in the queue at the router. Variable as it depends on how many other packets are in the queue.
+    \item \textbf{Transmission delay:} The time required to push all of the packet's bits from a switch into the link. Constant.
+    \item \textbf{Propagation delay:} The time required to propagate from the beginning of the link to the next switch. Constant.
+\end{itemize}
+
+
+
+\subsubsection{Visit the Transmission Versus Propagation Delay interactive animation at the Companion Website. Among the rates, propagation delays, and packet sizes available, find a combination for which the sender finishes transmitting before the first bit of the packet reaches the receiver. Find another combination for which the first bit reaches the receiver before the sender finishes transmitting. (R17)}
+
+The sender finishes transmitting before the first bit of the packet reaches the receiver when the length is 1000 km, the transmission rate is 512 kbs and the packet size is 100 Bytes. \\
+\\
+The first bit reaches the receiver before the sender finishes transmitting when the length is 10 km, the transmission rate is 512 kbs and the packet size is 1 kBytes.
+
+
+
+\subsubsection{A user can directly connect to a server through either long-range wireless or a twisted-pair cable for transmitting a 1500-bytes file. The transmission rates of the wireless and wired media are 2 and 100 Mbps, respectively. Assume that the propagation speed in the air is $3 \times 10^8$ m/s, while the speed in the twisted-pair cable is $2 \times 10^8$ m/s. If the user is located 1 km away from the server, what is the nodal delay when using each of the two technologies? (R18)}
+
+For the long-range wireless technology we can calculate the nodal delay by
+\begin{equation*}
+\begin{split}
+    d_{\text{nodal}} &= d_{\text{trans}} + d_{\text{prop}} \\
+    &= L/R + d/s \\
+    &= \frac{1 \, 500 \times 8 \, \text{bit}}{2\, 000 \, 000 \, \text{bit/s}} + \frac{1 \, 000\, \text{m}}{3 \times 10^8 \, \text{m/s}} \\
+    &= 0.006003 \, \text{s}
+\end{split}
+\end{equation*}
+where $R$ is transmission rate, $d$ is the distance and $s$ propagation speed. We assume no processing and queuing delay since we have no information about these. \\
+\\
+For the twisted-pair cable we calculate the nodal delay by
+\begin{equation*}
+    \begin{split}
+        d_{\text{nodal}} &= d_{\text{trans}} + d_{\text{prop}} \\
+        &= L/R + d/s \\
+        &= \frac{1 \, 500 \times 8 \, \text{bit}}{100 \, 000 \, 000 \, \text{bit/s}} + \frac{1 \, 000\, \text{m}}{2 \times 10^8 \, \text{m/s}} \\
+    &= 0.000125 \, \text{s}
+\end{split}
+\end{equation*}
+
+
+
+\subsubsection{Suppose Host A wants to send a large file to Host B. The path from Host A to Host B has three links, of rates $R_1 = 500 \, kbps$, $R_2 = 2 \, Mbps$, and $R_3 = 1 \, Mbps$. (R19)}
+
+\textbf{a. Assuming no other traffic in the network, what is the throughput for the file transfer?} \\
+The throughput is found by
+\begin{equation*}
+\begin{split}
+    \text{throughput} &= \min \lr{R_1, R_2, R_3} \\
+    &= 500 \, \text{kbps}
+\end{split}
+\end{equation*}
+\\
+\noindent
+\textbf{b. Suppose the file is 4 million bytes. Dividing the file size by the throughput, roughly how long will it take to transfer the file to Host B?} \\
+We have that 
+\begin{equation*}
+    \frac{4 \, 000 \, 000 \times 8 \, \text{bit}}{500 \, 000 \, \text{bit/s}} = 64 \, \text{s}
+\end{equation*}
+so it will take 64 seconds for the transfer. \\
+\\
+\textbf{c. Repeat (a) and (b), but now with $R_2$ reduced to 100 kbps.} \\
+We now have that 
+\begin{equation*}
+    \begin{split}
+        \text{throughput} &= \min \lr{R_1, R_2, R_3} \\
+        &= 100 \, \text{kbps}
+\end{split}
+\end{equation*}
+so now the time of transferring the file is
+\begin{equation*}
+    \frac{4 \, 000 \, 000 \times 8 \, \text{bit}}{100 \, 000 \, \text{bit/s}} = 320 \, \text{s}
+\end{equation*}
+
+
+
+\subsubsection{Suppose end system A wants to send a large file to end system B. At a very high level, describe how end system A creates packets from the file. When one of these packets arrives to a router, what information in the packet does the switch use to determine the link onto which this packet should be forwarded? Why is packet switching in the Internet analogous to driving from one city to another and asking directions along the way? (R20)}
+
+The large file is divided into packets of smaller size and provided with a header that contains its metadata (herein the IP address of the receiver). These packets are then sent on the access link for host A. The packet then arrives at a router where the router reads the receiving IP address of the packet in the header of the packet. The router uses this information along with a forwarding table encoded in the router to determine which link the packet should be forwarded on. \\
+\\
+The next router has to go through the same process of reading the receiving IP address and look up in its forwarding table where to send the packet. That is why packet switching is analogous to driving from on city to another asking for direction along the way - the packets ask every router it encounters for directions on the way from host A to host B.
+
+
+
+\subsubsection{Visit the Queuing interactive animation at the Companion Website. What is the maximum emission rate and the minimum transmission rate? With those rates, what is the traffic intensity? Run the interactive animation with these rates and determine how long it takes for packet loss to occur. Then repeat the experiment a second time and determine again how long it takes for packet loss to occur. Are the values different? Why or why not? (R21)}
+
+The maximum emission rate is 500 packets/s and the minimum transmission rate is 350 packets/s. This makes the traffic intensity $500/350 = 1.43$. The first experiment running at these rates results in the first packet loss occurring at 9.5 mses. The second experiment running the same rates results in the first packet loss occurring at 8.8 ms. The values are different because the emission process is random and the emission rate is only an average rate of how often packets are sent on the link. 

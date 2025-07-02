@@ -1,0 +1,36 @@
+\subsection{Connectionless Transport: UDP}
+
+\subsubsection{How is a UDP socket fully identified? What about a TCP socket? What is the difference between the full identification of both sockets? (R3)}
+
+A UDP socket is fully identified by the source port number assigned to the socket. A TCP socket is fully identified by the source port number assigned to the socket, but also the destination port number. The difference is therefore that TCP has additional information in its identification in the form of the destination port number.
+
+
+\subsubsection{Describe why an application developer might choose to run an application over UDP rather than TCP. (R4)}
+
+\begin{itemize}
+    \item Finer application-level control over what data is sent and when. This is because UDP is not controlled by implemented regulation, like congestion-control and the resending packets if no ACKs are received, that TCP is.
+    \item No connection establishment. UDP starts sending straight away instead of establishing a connection like TCP. This makes UDP more attractive for applications that requires a short quick connection.
+    \item No connection state. A server can run more UDP connections than TCP, because TCP requires storing states like buffers, congestion-control parameters, seq and ack number parameters. 
+    \item Small packet header overhead. UDP has only 8 byte header overhead while TCP has 20 bytes.
+\end{itemize}
+
+
+\subsubsection{Why is it that voice and video traffic is often sent over TCP rather than UDP in today's Internet? (Hint: The answer we are looking for has nothing to do with TCP's congestion-control mechanism.) (R5)}
+
+Most firewalls are configured to block UDP traffic, so using TCP ensures that video and voice traffic is let through firewalls. 
+
+
+\subsubsection{Is it possible for an application to enjoy reliable data transfer even when the application runs over UDP? If so, how? (R6)}
+
+Yes, the application developer can implement reliable data transfer into the application layer protocol. 
+
+
+\subsubsection{Suppose a process in Host C has a UDP socket with port number 6789. Suppose both Host A and Host B each send a UDP segment to Host C with destination port number 6789. Will both of these segments be directed to the same socket at Host C? If so, how will the process at Host C know that these two segments originated from two different hosts? (R7)}
+
+Yes, both segments is directed to the same socket. This is possible since each received segment, at the operating system will provide the process, at the socket layer, with the IP addresses to determine the source of the individual segments.
+
+\subsubsection{Suppose that a Web server runs in Host C on port 80. Suppose this Web server uses persistent connections, and is currently receiving requests from two different Hosts, A and B. Are all of the requests being sent through the same socket at Host C? If they are being passed through different sockets, do both of the sockets have port 80? Discuss and explain. (R8)}
+
+For each persistent connection the Web server will create a separate ''connection socket'' for each connection. This will be identified with a four-tuple consisting of source IP address, source port number, destination IP address and destination port number. When host C receives a segment through on of these persistent connection it examines the four-tuple to determine which socket it should pass the application data to. \\
+\\
+This means that no, the requests from the different hosts A and B are not received through the same socket, but through each connection socket allocated to the connection of each of the different hosts. It does however mean that yes, the identifier for both of these sockets has value 80 for the destination port, but the identifier for these sockets are different in their four-tuple in value for the source IP-addresses. This is however not visible at the application level since TCP, unlike UDP, does not specify the IP address when the transport layer passes a segment to the application process.

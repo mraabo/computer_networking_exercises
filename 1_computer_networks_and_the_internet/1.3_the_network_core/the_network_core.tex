@@ -1,0 +1,44 @@
+\subsection{The Network Core}
+
+\subsubsection{Suppose there is exactly one packet switch between a sending host and a receiving host. The transmission rates between the sending host and the switch and between the switch and the receiving host are $R_1$ and $R_2$, respectively. Assuming that the switch uses store-and-forward packet switching, what is the total end-to-end delay to send a packet of length $L$? (Ignore queuing, propagation delay, and processing delay.) (R11)}
+
+It would take $L/R_1$ time for the packet to get to the switch and then $L/R_2$ time for the packet to get to the receiving host from the switch. Since we assume no queuing or delays this gives a total end-to-end delay of $L/R_1 + L/R_2$.
+
+\subsubsection{What advantage does a circuit-switched network have over a packet-switched network? What advantages does TDM have over FDM in a circuit-switched network? (R12)}
+Circuit-switched networks does not have the same problems as packet-switched networks have regarding variable and unpredictable end-to-end delays, which makes circuit-switched networks more ideal for real-time applications such as voice and video. \\
+\\
+Time-division multiplexing (TDM) has the advantage over frequency-division multiplexing (FDM) that it allows for more users in a restricted bandwidth. This is because TDM allocates a time slot for each user, while FDM allocates a frequency band for each user. This means that TDM can have more users in the same bandwidth, since the users do not use the bandwidth simultaneously. TDM also has the advantage over FDM that it is easier to implement as FDM required sophisitcated analog hardware to shift signals into different frequency bands.
+
+\subsubsection{Suppose users share a 2 Mbps link. Also suppose each user transmits continuesly at 1 Mbps when transmitting, but each user transmits only 20 percent of the time. (R13)}
+
+\textbf{a. When circuit switching is used, how many users can be supported?}\\
+When using circuit switching with multiplexing then the two users can both be serviced. This can be done with frequency-division multiplexing (FDM) where one user reserves 1 Mbps and the other user takes the other 1 Mpbs. It can also be done with time-division multiplexing (TDM) where the whole 2 Mpbs are allocated to user1 in a time interval and then switches to user2 in another interval and then back to user1 and continues this pattern. \\
+\\
+Since we do not know which 20 percent the users transmit we have to reserve the bandwidth in both the TDM and FDM approach. This means that no other users can join in on the bandwidth, which is the drawdown of using circuit switching. Therefore the answer is 2 users. \\
+\\
+\textbf{b. For the remainder of this problem, suppose packet switching is used. Why will there be essentially no queuing delay before the link if two or fewer users transmit at the same time? Why will there be queuing delay if three users transmit at the same time?} \\
+Since the capacity is 2 Mbps and users transmit at 1 Mbps, then 2 users can send packets of 1 Mb per second, without queuing. This is because the rate of information sending fits exactly with the bandwidth capacity. If a third user join in, then the users try to send 3 Mbps, while the capacity is only at 2 Mpbs. This will make the packets queue up, when they are sending simultaneously. \\
+\\
+\textbf{c. Find the probability that a given user is transmitting.}\\
+Each user transmits 20 percent of a time, meaning that at anytime there is 20 \% probability that a user is transmitting. \\
+\\
+\textbf{d. Suppose now there are three users. Find the probability that any given user is transmitting simultaneously. Find the fraction of time during which the queue grows.}\\
+We denote $P(x_1)$ as the probability that user1 is transmitting. We know from part c that $P(x_i) = 0.2$ for any $i$. The joint distribution $P(x_1, x_2, x_3)$ can be found by
+$$ P(x_1, x_2, x_3) = P(x_1)P(x_2)P(x_3)$$
+as we assume independence. Inserting $P(x_i)=0.2$ for $i \in {1, 2, 3}$ we get
+$$ P(x_1, x_2, x_3) = 0.2^3 = 0.008$$ 
+The queue will grow as soon as 3 are transmitting at the same time. We know from the above calculation that the probability of this is 0.008. This means that on average the fraction of time, for which the queue grows, is 0.008. 
+
+
+\subsubsection{Why will two ISPs at the same level of the hierarchy often peer with each other? How does an IXP earn money? (R14)}
+
+Two ISPs at the same level of the hierarchy might find it attractive to peer with each other, since this usually happens transaction-free and can help both ISPs route traffic to more far-away costumers. An Internet Exchange Point (IXP) can earn money by being a meeting point where multiple ISPs can peer together. An IXP is a stand-alone building with a lot of switches, which the ISPs do not need to build themselves, and might like to pay for instead. 
+
+\subsubsection{Why is a content provider considered a different Internet entity today? How does a content provider connect to other ISPs? Why? (R15)}
+
+A content provider is considered a different Internet entity today, because they are aim to create their own network infrastructure.\\ 
+\\
+A content provider can connect to other ISPs by using a private peering connection, which is a direct connection between the content provider and the ISP. This is usually only done to the lower-level ISPs.\\
+\\
+They do this to bypass higher level ISPs and thus reduce costs. They also benefit from having greater control over how their content are provided to end users, when having their own network infrastructure. \\
+\\

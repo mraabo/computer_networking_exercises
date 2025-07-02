@@ -1,0 +1,11 @@
+\subsection{DNS - the Internet's Directory Service}
+
+
+\subsubsection{Why are MX records needed? Would it not be enough to use a CNAME record? (Assume the email client looks up email addresses through a Type A query and that the target host only runs an email server.) (R19)}
+
+MX records are needed when an organization wants their mail server to have the same alias as one of their other servers. If the target host only runs an email server, then MX is not needed and it would indeed be enough to use a CNAME record.
+
+
+\subsubsection{What is the difference between recursive and iterative DNS queries? (R20)}
+
+A recursive query is when a DNS server asks another DNS server to obtain a mapping on its behalf (by quering other DNS servers). An iterative DNS query is when a DNS server queries for a mapping by itself, without asking intermediary DNS servers to query on its behalf.

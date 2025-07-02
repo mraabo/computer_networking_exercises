@@ -1,0 +1,42 @@
+\subsection{The Web and HTTP}
+
+
+\subsubsection{What is meant by a handshaking protocol? (R10)}
+It is a protocol that defines how a client and a serves initiates a connection before transporting the application.
+
+
+\subsubsection{How can websites keep track of users? Do they always need to use cookies? (R12)}
+Most websites use cookies to keep track of users. Cookies work by having the server send a cookie header line in the response message the first time a user visits the website. This cookie header contains the identification number of the user. The client then response with its usual request along with a cookie header containing the same identification number (to accept the identification by this number). The ID number is then inserted in a cookie file that is kept both on the clients end system is managed by The browser and on the websites back-end database. The website can then perform cookie-specific actions, i.e. user-specific actions, and reply to the client accordingly. On subsequent visits the the website the browser will initially pass a cookie header to the server, and thereby identify the user to the server. \\
+\\
+No, a website have other means than cookies to track its users, some of which are
+\begin{itemize}
+    \item \textbf{Session IDs}: IDs that are stored as parameters in the URLs or hidden form fields, for identifying users temporarily while they navigate the website
+    \item \textbf{Local storage}: HTML5 permits websites to store data locally on a user's device.
+    \item \textbf{Server-side tracking}: Storing user-related information on the server associating it with the user's session or account.
+    \item \textbf{Browser fingerprinting}: Collecting information about a user's browser and device configurations.
+    \item \textbf{OAuth tokens or JSON Web Tokens}: Tokens that are securely generated and exchanged between client and server.
+    \item \textbf{Device recognition}: Websites can store characteristics of user's devices such as IP addresses, user agent, screen resolution.
+\end{itemize}
+
+
+\subsubsection{Describe how Web caching can reduce the delay in receiving a requested object. Will Web caching reduce the delay for all objects requested by a user or for only some of the objects? Why? (R13)}
+Web caching can reduce delay by being placed a number of links closer to the client than the server while storing the most recently requested data from the server. There is therefore a chance that the data only needs to be send the distance from the client to the web cache, if the web cache happens to be storing the requested data. \\
+\\
+No the web cache does not necessarily  reduce delay for all objects requested. If the web cache is not currently storing the requested objects, then it needs to request it from the server, before sending it to the client. This means that an additional connection needs to be established and the delay is therefore larger (by the time it takes to establish a connection) in this case than if the client was connecting directly to the server without the web cache acting a middleman. \\
+\\
+On the other hand it is possible that Web caching reduce delay for a user even when the requested object is not currently stored in the web cache, since the existence of a web cache likely reduce traffic on the link to the server (since other user's who have their requested objects stored in the web cache will not use this link).
+
+
+\subsubsection{Telnet into a Web server and send a multiline request message. Include in the request message the \texttt{If-modified-since}: header line to force a response message with the \texttt{304 Not Modified} status code. (R14)}
+\begin{verbatim}
+GET /~remzi/OSTEP/ HTTP/1.1
+Host: pages.cs.wisc.edu
+If-modified-since: Fri, 18 Aug 2023 22:30:00 GMT
+\end{verbatim}
+
+
+\subsubsection{What is the HOL blocking issue in HTTP/1.1? How does HTTP/2 attempt to solve it? (R18)}
+
+Head of Line (HOL) blocking is when a very large object, in terms of bytes, is on the top of a page before many small objects. This causes the small objects to wait for the large one to be sent. This makes the user-perceived delay to be much larger than if the smaller object could be loaded fast before the large object. HTTP/1.1 attempts to solve this problem by opening multiple TCP connections and sending the object in parallel. However this causes two new problems; one is having a larger number of sockets that needs to be opened and maintained at servers, the second is that this ''cheats'' TCP congestion controls in bottlenecks since these allocate $1/n$ths of the bandwidth to each TCP connection, when there are $n$ total connection over the link, thus grabbing a larger portion than intended. \\
+\\
+HTTP/2 attempts to solve the HOL blocking issue without creating a need for multiple parallel TCP connections for transporting a single Web page. This is done by breaking each message into small frames and interleaving the request and response message on the same TCP connection. This is done by collecting the portion of the large objects with the smaller objects in frames. These frames are then sent sequentially, and reassembled into the original message at the server-side. This causes the smaller objects to be sent alog with the larger objects and thus faster, than if they had to wait for the larger objects to be sent first. This reduce user-perceived delay without needing to maintain multiple TCP connections.

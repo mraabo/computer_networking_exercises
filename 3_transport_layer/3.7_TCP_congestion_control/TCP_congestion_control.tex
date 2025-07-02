@@ -1,0 +1,30 @@
+\subsection{TCP Congestion Control}
+
+
+\subsubsection{Consider two hosts, A and B, transmitting a large file to a server C, over a bottleneck link with rate R. To transfer the file, the hosts use TCP with the same parameters (including MSS and RTT) and start their transmissions at the same time. Host A uses a single TCP connection for the entire file, while Host B uses 9 simultaneous TCP connections, each for a portion (i.e., a chunk) of the file. What is the overall transmission rate achieved by each host at the beginning of the file transfer? Is this situation fair? (R17)}
+
+As the bottleneck has transmission rate $R$ and supports 10 TCP connections it will divide its transmission rate equally so that each TCP connection gets $R/10$ of the bandwidth. Since the hosts have the same parameters and starts transmissions at the same time we have that at the beginning of the file transfer each connection will request 1 MSS. This means that host A with only one TCP connection will get a transmission rate of $R/10$ while host B with 9 simultaneous connections will get $9R/10$. \\
+\\
+Since the definition of fair is sharing bandwidth equally between hosts we have that the situation is far from fair and host B gets $9/10$th of the bandwidth by using simultaneous TCP connections instead of a single connection like host A.
+
+\subsubsection{True or false? Consider congestion control in TCP. When the timer expires at the sender, the value of \texttt{ssthresh} is set to one half of its previous value. (R18)}
+
+False, \texttt{ssthresh} is set the half of the current value of the congestion window \texttt{cwnd}.
+
+\subsubsection{According to the discussion of TCP splitting in the sidebar in Section 3.7, the response time with TCP splitting is approximately $4 \times \text{RTT}_{\text{FE}} + \text{RTT}_{\text{BE}}+$ processing time, as opposed to $4 \times RTT +$ processing time when a direct connection is used. Assume that $\text{RTT}_\text{BE}$ is $0.5 \times \text{RTT}$. For what values of $\text{RTT}_{\text{FE}}$ does TCP splitting have a shorter delay than a direct connection? (R19)}
+
+We have that TCP splitting have shorter delay than a direct connection when 
+\begin{equation*}
+    4 \text{RTT}_{\text{FE}} + \text{RTT}_{\text{BE}} + \text{processing time} < 4 \text{RTT} + \text{processing time}
+\end{equation*}    
+Inserting the value for $\text{RTT}_{\text{BE}}$ and isolating for $\text{RTT}_{\text{FE}}$ gives
+\begin{equation*}
+\begin{split}
+    4 \text{RTT}_{\text{FE}} + \text{RTT}_{\text{BE}} + \text{processing time} &< 4 \text{RTT} + \text{processing time} \\
+    4 \text{RTT}_{\text{FE}} + \text{RTT}_{\text{BE}}  &< 4 \text{RTT} \\
+    4 \text{RTT}_{\text{FE}} + 0.5 \text{RTT}  &< 4 \text{RTT} \\
+    4 \text{RTT}_{\text{FE}} &< \frac{3}{2} \text{RTT} \\
+    \text{RTT}_{\text{FE}} &< \frac{3}{8} \text{RTT} 
+\end{split}
+\end{equation*}
+So in this case TCP splitting has shorter delay than a direct connection when $\text{RTT}_{\text{FE}}$ is less than $\frac{3}{8} \text{RTT}$.

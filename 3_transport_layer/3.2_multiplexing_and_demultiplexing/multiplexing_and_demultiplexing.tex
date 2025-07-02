@@ -1,0 +1,23 @@
+\subsection{Multiplexing and Demultiplexing}
+
+
+\subsubsection{Suppose the network layer provides the following service. The network layer in the source host accepts a segment of maximum size 1,200 bytes and a destination host address from the transport layer. The network layer then guarantees to deliver the segment to the transport layer at the destination host. Suppose many network application processes can be running at the destination host. (R1)} 
+
+\textbf{a. Design the simplest possible transport-layer protocol that will get application data to the desired process at the destination host. Assume the operating system in the destination host has assigned a 4-byte port number to each running application process.} \\
+From the sender side construct 4-byte header with destination port and IP. Add these header to segments with application data that does not exceeding 1196 bytes, so that the total segment is max 1200 bytes. This protocol hands these segments to the network layer which sends them to the receiver. The receiver then examines the port number in the segment header, extracts the data, and passes the data to the process identified by the port number. \\
+\\
+\textbf{b. Modify this protocol so that it provides a “return address” to the destination process.} \\
+The segment should now have two header fields: a source port field and a destination port field. As each of these fields take 4 bytes, we have that the application data should not exceed 1192 bytes. The protocol adds the headers to the segments and hands the segments to the network layer, which sends it to the destination host. The destination host then demultiplex the segments by reading the destination port field, extracts the application data and delivers the data to the process identified by this port field. \\
+\\
+\textbf{c. In your protocols, does the transport layer “have to do anything” in the core of the computer network?} \\
+No the protocol has nothing to to in the core of the network. It only does anything at the end systems, i.e. source and host. Here it where it labels receiver and sender and multiplexes/demultiplexes the packets.
+
+\subsubsection{Consider a planet where everyone belongs to a family of six, every family lives in its own house, each house has a unique address, and each person in a given house has a unique name. Suppose this planet has a mail service that delivers letters from source house to destination house. The mail service requires that (1) the letter be in an envelope, and that (2) the address of the destination house (and nothing more) be clearly written on the envelope. Suppose each family has a delegate family member who collects and distributes letters for the other family members. The letters do not necessarily provide any indication of the recipients of the letters. (R2)}
+
+\textbf{a. Using the solution to Problem R1 above as inspiration, describe a protocol that the delegates can use to deliver letters from a sending family member to a receiving family member.} \\
+Since no receiver names are written on the envelope it will be hard to distribute the letters to the correct family members without opening the envelope, reading the letter and deducing it from the content. A protocol that can help the delegation would simply be to write the receivers name on the envelope. Since every family have a unique name, a first name would be sufficient to identify the receiver. \\
+\\
+A complete description of such a protocol would be that each family member sending a letter writes the recipients name and address on the envelope of the letter before giving it to the delegator of the house which handles all the envelopes to the mail service. The mail service then makes sure that the letter arrive at the receiving family. Here the delegate checks the names on the envelope and hands each envelope to the person which name is written on it. This person can then afterwards open the envelope and read the contents of the letter. \\
+\\
+\textbf{b. In your protocol, does the mail service ever have to open the envelope and examine the letter in order to provide its service?} \\
+No, the mail service does not need to open the envelope. The job of the mail service is only to ensure that the envelopes arrive at the correct address, and since the address is written on the envelope then the mail service need not open the envelopes.

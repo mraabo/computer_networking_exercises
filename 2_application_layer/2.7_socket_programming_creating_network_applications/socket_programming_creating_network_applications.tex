@@ -1,0 +1,13 @@
+\subsection{Socket Programming: Creating Network Applications}
+
+
+
+\subsubsection{In Section 2.7, the UDP server described needed only one socket, whereas the TCP server needed two sockets. Why? If the TCP server were to support $n$ simultaneous connections, each from a different client host, how many sockets would the TCP server need? (R26)}
+
+The UDP protocol does not specify a welcoming socket, so for the UDP server all incoming data from different clients enters through one socket. TCP on the other hand has a specified welcoming socket, which handles all client initiation with the server before a new socket is created to handle each connection. Therefore handling $n$ simultaneous connection would require $n + 1$ sockets for the TCP server, $n$ sockets for each connection and 1 welcoming socket.
+
+
+
+\subsubsection{For the client-server application over TCP described in Section 2.7, why must the server program be executed before the client program? For the client-server application over UDP, why may the client program be executed before the server program? (R27)}
+
+The TCP client starts by trying to connect to the TCP server, so if the server if not executed first, then the client will simply fail to connect. On the contrary the UDP client does not attempt to connect immediately but first construct the packet and the sends it on a link. So the UDP server does not need to be executed before the client, and only needs to be executed before the packet arrives at the server socket, so that it is not lost.

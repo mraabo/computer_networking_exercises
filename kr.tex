@@ -1,0 +1,146 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{pgfplots} % for drawing functions
+\usepackage{enumerate} % for enumerating letters etc.
+\usepackage{tasks} % For columned horizontal lists
+\usepackage[english]{babel}
+\graphicspath{ {./pics/} }
+\usepackage{natbib} % For bibtex references
+
+% For creating graphs and other diagrams
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows, calc}
+\tikzset{
+  ->, % makes the edges directed
+  >=stealth', % makes the arrow heads bold
+  node distance=4cm, % specifies the minimum distance between two nodes. Change if necessary.
+  every state/.style={thick, fill=gray!10}, % sets the properties for each ’state’ node
+  initial text=$ $, % sets the text that appears on the start arrow
+}
+
+% For custom coloring
+\usepackage{xcolor} % For coloring text
+\definecolor{ao(english)}{rgb}{0.0, 0.5, 0.0}
+
+% For blue click-to-go reference
+\usepackage{hyperref}
+	\hypersetup{
+		colorlinks=true,
+		linkcolor=blue,
+		filecolor=magenta,      
+		urlcolor=cyan,
+		citecolor=ao(english)
+	}
+\hypersetup{linktocpage}
+\usepackage{url} % For click-to-go on url-references
+\usepackage{fancyhdr} % For page layout and sexy headers
+
+\usepackage{lastpage} % For displaying the last page of the document
+
+% For math symbols ---------------
+\usepackage{amsmath}
+\usepackage{amssymb}
+\include{latex_commands.sty}
+
+
+% Code snippets and files ------------------
+\usepackage{listings}  % For presenting code
+\lstdefinestyle{mystyle}{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color[HTML]{F7F7F7},
+  rulecolor=\color[HTML]{EEEEEE},
+  identifierstyle=\color[HTML]{24292E},
+  emphstyle=\color[HTML]{005CC5},
+  keywordstyle=\color[HTML]{D73A49},
+  commentstyle=\color[HTML]{6A737D},
+  stringstyle=\color[HTML]{032F62},
+  emph={@property,self,range,True,False},
+  morekeywords={super,with,as,lambda},
+  literate=%
+    {+}{{{\color[HTML]{D73A49}+}}}1
+    {-}{{{\color[HTML]{D73A49}-}}}1
+    {*}{{{\color[HTML]{D73A49}*}}}1
+    {/}{{{\color[HTML]{D73A49}/}}}1
+    {=}{{{\color[HTML]{D73A49}=}}}1
+    {/=}{{{\color[HTML]{D73A49}=}}}1,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=left,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=4,
+  frame=single,
+}
+\lstset{style=mystyle}
+
+
+%%%%%%  Layout settings ------------------------------
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+\renewcommand{\baselinestretch}{1.1} % Adjusts spacing of text
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Magnus Raabo Andersen}
+\lhead{\nouppercase \leftmark}
+\rfoot{Side \thepage/ \pageref*{LastPage}}
+\title{KR - Computer Networks: A Top Down Approach}
+\author{Magnus Raabo Andersen}
+\numberwithin{equation}{section}
+\setcounter{tocdepth}{2} % Includes depth only down to subsections in table of content.
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\tableofcontents
+\newpage
+\setcounter{page}{1}
+
+\section{Computer Networks and the Internet}
+\input{1_computer_networks_and_the_internet/1.1_what_is_the_internet/what_is_the_internet.tex}
+\include{1_computer_networks_and_the_internet/1.2_the_network_edge/the_network_edge.tex}
+\include{1_computer_networks_and_the_internet/1.3_the_network_core/the_network_core.tex}
+\include{1_computer_networks_and_the_internet/1.4_delay_loss_and_throughput_in_packet-switchted_networks/delay_loss_and_throughput_in_packet-switched_networks.tex}
+\include{1_computer_networks_and_the_internet/1.5_protocol_layers_and_their_service_models/protocol_layers_and_their_service_models.tex}
+\include{1_computer_networks_and_the_internet/1.6_networks_under_attack/networks_under_attack.tex}
+\include{1_computer_networks_and_the_internet/1.7_history_of_computer_networking_and_the_internet/history_of_computer_networking_and_the_internet.tex}
+\include{1_computer_networks_and_the_internet/1.8_problems/problems.tex}
+
+\section{Application Layer}
+\input{2_application_layer/2.1_principles_of_network_applications/principles_of_network_applications.tex}
+\include{2_application_layer/2.2_the_web_and_http/the_web_and_http.tex}
+\include{2_application_layer/2.3_electronic_mail_in_the_internet/electronic_mail_in_the_internet.tex}
+\include{2_application_layer/2.4_DNS_the_internets_directory_service/DNS_the_internets_directory_service.tex}
+\include{2_application_layer/2.5_peer_to_peer_file_distribution/peer_to_peer_file_distribution.tex}
+\include{2_application_layer/2.6_video_streaming_and_content_distribution_networks/video_streaming_and_content_distribution_networks.tex}
+\include{2_application_layer/2.7_socket_programming_creating_network_applications/socket_programming_creating_network_applications.tex}
+\include{2_application_layer/2.8_problems/problems.tex}
+\include{2_application_layer/2.9_programming_assignments/programming_assignments.tex}
+
+\section{Transport Layer}
+\input{3_transport_layer/3.1_introduction_and_transport-layer_services/introduction_and_transport-layer_services.tex}
+\include{3_transport_layer/3.2_multiplexing_and_demultiplexing/multiplexing_and_demultiplexing}
+\include{3_transport_layer/3.3_connectionless_transport:UDP/connectionless_transport:UDP}
+\include{3_transport_layer/3.4_principles_of_reliable_data_transfer/principles_of_reliable_data_transfer}
+\include{3_transport_layer/3.5_connection-oriented_transport:TCP/connection-oriented_transport:TCP}
+\include{3_transport_layer/3.6_principles_of_congestion_control/principles_of_congestion_control}
+\include{3_transport_layer/3.7_TCP_congestion_control/TCP_congestion_control}
+\include{3_transport_layer/3.8_evolution_of_transport-layer_functionality/evolution_of_transport-layer_functionality}
+\include{3_transport_layer/3.9_problems/problems}
+\include{3_transport_layer/3.10_programming_assignments/programming_assignment.tex}
+
+\section{The Network Layer: Data Plane}
+\input{4_the_network_layer:data_plane/4.1_overview_of_network_layer/overview_of_network_layer.tex}
+\input{4_the_network_layer:data_plane/4.2_whats_inside_a_router/whats_inside_a_router.tex}
+\input{4_the_network_layer:data_plane/4.3_the_internet_protocol:IPv4_adressing_IPv6_and_more/4.3_the_internet_protocol:IPv4_adressing_IPv6_and_more.tex}
+\input{4_the_network_layer:data_plane/4.4_generalized_forwarding_and_SDN/4.4_generalized_forwarding_and_SDN.tex}
+\input{4_the_network_layer:data_plane/4.5_middleboxes/middleboxes.tex}
+\input{4_the_network_layer:data_plane/4.6_problems/problems.tex}
+
+\bibliographystyle{agsm}
+\nocite{*}
+\bibliography{bibFile} 
+\end{document}

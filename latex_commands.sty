@@ -1,0 +1,70 @@
+% Left-right bracket
+\newcommand{\lr}[1]{\left (#1\right)}
+
+% Left-right square bracket
+\newcommand{\lrs}[1]{\left [#1 \right]}
+
+% Left-right curly bracket
+\newcommand{\lrc}[1]{\left \{#1\right\}}
+
+% Left-right absolute value
+\newcommand{\lra}[1]{\left |#1\right|}
+
+% Left-right upper value
+\newcommand{\lru}[1]{\left \lceil#1\right\rceil}
+
+% Scalar product
+\newcommand{\vp}[2]{\left \langle #1 , #2 \right \rangle}
+
+% The real numbers
+\newcommand{\R}{\mathbb R}
+
+% The natural numbers
+\newcommand{\N}{\mathbb N}
+
+% The integer numbers
+\newcommand{\Z}{\mathbb Z}
+
+% The rational numbers
+\newcommand{\Q}{\mathbb Q}
+
+% Expectation symbol with an optional argument
+\NewDocumentCommand{\E}{o}{\mathbb E\IfValueT{#1}{\lrs{#1}}}
+
+% Variance
+\DeclareMathOperator{\V}{Var}
+\NewDocumentCommand{\Var}{o}{\V\IfValueT{#1}{\lrs{#1}}}
+
+% Indicator function with an optional argument
+\NewDocumentCommand{\1}{o}{\mathds 1{\IfValueT{#1}{\lr{#1}}}}
+
+% Probability function
+\let\P\undefined
+\NewDocumentCommand{\P}{o}{\mathbb P{\IfValueT{#1}{\lr{#1}}}}
+
+% A hypothesis space
+\newcommand{\HH}{\mathcal H}
+
+% A sample space
+\newcommand{\XX}{\mathcal{X}}
+
+% A label space
+\newcommand{\YY}{\mathcal{Y}}
+
+% A nicer emptyset symbol
+\let\emptyset\varnothing
+
+% Sign operator
+\DeclareMathOperator{\sign}{sign}
+\newcommand{\sgn}[1]{\sign\lr{#1}}
+
+% Argmin and argmax function
+\DeclareMathOperator{\argmax}{arg\,max}
+\DeclareMathOperator{\argmin}{arg\,min}
+
+% floor operator
+\newcommand{\floor}[1]{\lfloor #1 \rfloor}
+
+% Ceil operator
+\newcommand{\ceil}[1]{\lceil #1 \rceil}
+

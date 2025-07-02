@@ -1,0 +1,31 @@
+\subsection{Peer-to-Peer File Distribution}
+
+
+\subsubsection{Under what circumstances is file downloading through P2P much faster than through a centralized client-server approach? Justify your answer using Equation 2.2. (R21)}
+
+We have that P2P downloading is faster than using centralized client-server when the delay using P2P, $D_{P2P}$, is lower than the delay when using centralized client-server, $D_{cs}$. Inserting equations 2.1 and 2.2 we have that
+\begin{equation*}
+\begin{split}
+      D_{cs} &> D_{P2P} \Longleftrightarrow \\
+      \max \frac{NF}{u_s}, \frac{F}{d_\text{min}} &> D_{P2P} \geq \max \lrc{\frac{F}{u_s}, \frac{F}{d_\text{min}}, \frac{NF}{u_s + \sum_{i = 1}^{N} u_i}}
+\end{split}
+\end{equation*}
+Since $D_{P2P}$ is only lower bounded we cannot say when P2P is faster than CS, unless we assume the set of circumstances where each peer can redistribute a bit as soon as it receives it, so that there is a redistribution scheme that achieves the lower bound(kumar2006) (which is also equation 2.3 in the book). In that case we have that P2P is faster when
+\begin{equation*}
+\begin{split}
+      D_{cs} &> D_{P2P} \Longleftrightarrow \\
+      \max \lrc{\frac{NF}{u_s}, \frac{F}{d_\text{min}}} &> \max \lrc{\frac{F}{u_s}, \frac{F}{d_\text{min}}, \frac{NF}{u_s + \sum_{i = 1}^{N} u_i}}
+\end{split}
+\end{equation*}
+which we see is the case when $N > 1$ and $\sum_{i = 1}^{N} u_i > 0$ and $\max \lrc{\frac{F}{u_s}, \frac{F}{d_\text{min}}, \frac{NF}{u_s + \sum_{i = 1}^{N} u_i}} \neq \frac{F}{d_\text{min}}$. In other words P2P is faster than a centralized client-server when the network is larger than 1 person and the peers in the network contribute to the upload stream and the lowest download rate of the peers is not a bottleneck causing the largest delay.
+
+
+\subsubsection{Consider a new peer Alice that joins BitTorrent without possessing any chunks. Without any chunks, she cannot become a top-four uploader for any of the other peers, since she has nothing to upload. How then will Alice get her first chunk? (R22)}
+
+Every 30 seconds a peers picks a neighbor at random and sends it chunks, which is called making that peer optimistically unchoked. Alice can therefore receive her first chunk by being optimistically unchoked by random chance, and afterwards she has the opportunity to become a top-four uploader.
+
+
+\subsubsection{Assume a BitTorrent tracker suddenly becomes unavailable. What are its consequences? Can files still be downloaded? (R23)}
+
+It has the consequences that new peers trying to join the network will experience delay since they rely on the tracker to initially discover peers. If you are already connected to a list of peers, then you can still download and upload files. BitTorrent is designed to be decentralized so the absence of a tracker does not prevent data transfer between peers that have already established a connection.
+

@@ -1,0 +1,802 @@
+\subsection{Problems}
+
+
+
+\subsubsection{True or false? (P1)}
+
+\textbf{a. A user requests a Web page that consists of some text and three images. For this page, the client will send one request message and receive four response messages.}\\
+False, if the text and images can fit in a packet, it will only receive a single message.\\
+\\
+\textbf{b. Two distinct Web pages (for example, \texttt{www.mit.edu/research.html} \\ and \texttt{www.mit.edu/students.html}) can be sent over the same persistent connection.} \\
+True, there is no reason two webpages can not be received on the same connection. \\
+\\
+\textbf{c. With nonpersistent connections between browser and origin server, it is possible for a single TCP segment to carry two distinct HTTP request messages.} \\
+False, if the connections are nonpersistent then sending each message requires setting up a TCP segment. Therefore sending two messages on nonpersistent connections requires two TCP segments.\\
+\\
+\textbf{d. The \texttt{Date}: header in the HTTP response message indicates when the object in the response was last modified.} \\
+False, it indicates when the HTTP response message was created or last modified. \texttt{Last-Modified:} indicates when the object was created or last modified. \\
+\\
+\textbf{e. HTTP response messages never have an empty message body.} \\
+False, e.g. when sending GET-requests the message body is empty.
+
+
+
+\subsubsection{SMS, iMessage, Wechat, and WhatsApp are all smartphone real-time messaging systems. After doing some research on the Internet, for each of these systems write one paragraph about the protocols they use. Then write a paragraph explaining how they differ. (P2)}
+
+\begin{itemize}
+    \item \textbf{SMS}: Stateless protocol that works by sending messages to a short message service center (SMSC), which provides a ''store and forward'' mechanism where messages are queued if the recipient is unreachable. Message delivery is ''best effort'', meaning that there is no guaranteed that messages are delivered. 
+    \item \textbf{IMessage}: Protocol based on the Apple Push Notification service (APNs), which is a proprietary, binary protocol. It sets up a Keep-Alive connection with Apple servers, where messages are TLS-encrypted and stored on the servers for 30 days.
+    \item \textbf{Wechat}: Protocol called MMTLS based on Transport Layer Security (TLS). Accounts registered with chinese phone numbers have their data stored in China for surveillance and censoring politically sensitive subjects. Other accounts have data stored in the Netherlands with stricter privacy policy.
+    \item \textbf{WhatsApp}: Freeware protocol based on a customized version of the open standard Extensible Messaging and Presence Protocol (XMPP). Uses end-to-end encryption.
+\end{itemize}
+The services differ in regards to privacy, since Whatsapp and IMessage are encryption, SMS is not and Wechat is surveyed and censored. SMS uses the text messaging plan we purchase from our wireless carrier while the others uses Wi-Fi.
+
+
+\subsubsection{Assume you open a browser and enter \texttt{http://yourbusiness.com/about.html} in the address bar. What happens until the webpage is displayed? Provide details about the protocol(s) used and a high-level description of the messages exchanged. (P3)}
+
+First a DNS-lookup is performed to get the IP address of the URL. When the IP and socket number has been received then for UDP the request message is simply sent to the socket, while for TCP the connection is first established at this welcoming socket and then the request is sent to the connection socket. Since the request message is in the form of HTTP a GET token will be inserted in the header of the HTTP message. \\
+\\
+When the request is received the server will send a HTTP message via the established socket with ''200 OK'' in the header line (assuming it found the html-file) and the html-file will be sent in the body of the message. The client will receive the message via its established socket and the browser will unpack the html-file for the user to see.
+
+
+\subsubsection{Consider the following string of ASCII characters that were captured by Wireshark when the browser sent an HTTP GET message (i.e., this is the actual content of an HTTP GET message). The characters \texttt{<cr><lf>} are carriage return and line-feed characters (that is, the italized character string \texttt{<cr>} in the text below represents the single carriage-return character that was contained at that point in the HTTP header). Answer the following questions, indicating where in the HTTP GET message below you find the answer. (P4)}
+
+\begin{verbatim}
+GET /cs453/index.html HTTP/1.1<cr><lf>Host: gai
+a.cs.umass.edu<cr><lf>User-Agent: Mozilla/5.0 (
+Windows;U; Windows NT 5.1; en-US; rv:1.7.2) Gec
+ko/20040804 Netscape/7.2 (ax) <cr><lf>Accept:ex
+t/xml, application/xml, application/xhtml+xml, text
+/html;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+<cr><lf>Accept-Language: en-us,en;q=0.5<cr><lf>Accept-
+Encoding: zip,deflate<cr><lf>Accept-Charset: ISO
+-8859-1,utf-8;q=0.7,*;q=0.7<cr><lf>Keep-Alive: 300<cr>
+<lf>Connection:keep-alive<cr><lf><cr><lf>
+\end{verbatim}
+\noindent
+\textbf{a. What is the URL of the document requested by the browser?} \\
+\texttt{http://gaia.cs.umass.edu/cs453/index.html} \\
+\\
+\textbf{b. What version of HTTP is the browser running?} \\
+HTTP/1.1 \\
+\\
+\textbf{c. Does the browser request a non-persistent or a persistent connection?} \\
+From \texttt{Connection:keep-alive} we can see that the browser requests a persistent connection. \\
+\\
+\textbf{d. What is the IP address of the host on which the browser is running?} \\
+Not included in message, can be acquired by the IP datagram that carried the TCP segment that carried the HTTP GET request. \\
+\\
+\textbf{e. What type of browser initiates this message? Why is the browser type needed in an HTTP request message?} \\
+Mozilla/5.0, which can be seen by \texttt{User-Agent: Mozilla/5.0}. The browser type is required information for the server for it to be able to send different version of the same object to different browsers.
+
+
+\subsubsection{The text below shows the reply sent from the server in response to the HTTP GET message in the question above. Answer the following questions, indicating where in the message below you find the answer. (P5)}
+
+\begin{verbatim}
+HTTP/1.1 200 OK<cr><lf>Date: Tue, 07 Mar 2008
+12:39:45GMT<cr><lf>Server: Apache/2.0.52 (Fedora)
+<cr><lf>Last-Modified: Sat, 10 Dec2005 18:27:46
+GMT<cr><lf>ETag: ”526c3-f22-a88a4c80”<cr><lf>Accept-
+Ranges: bytes<cr><lf>Content-Length: 3874<cr><lf>
+Keep-Alive: timeout=max=100<cr><lf>Connection:
+Keep-Alive<cr><lf>Content-Type: text/html; charset=
+ISO-8859-1<cr><lf><cr><lf><!doctype html public ”-
+//w3c//dtd html 4.0transitional//en”><lf><html><lf>
+<head><lf> <meta http-equiv=”Content-Type”
+content=”text/html; charset=iso-8859-1”><lf> <meta
+name=”GENERATOR” content=”Mozilla/4.79 [en] (Windows NT
+5.0; U) Netscape]”><lf> <title>CMPSCI 453 / 591 /
+NTU-ST550ASpring 2005 homepage</title><lf></head><lf>
+<much more document text following here (not shown)>
+\end{verbatim}
+\noindent
+\textbf{a. Was the server able to successfully find the document or not? What time was the document reply provided?} \\
+The document was found as indicated by the OK message and status code 200. The time can be seen in the first line: 07/03/2008 12:39:45 GMT. \\
+\\
+\textbf{b. When was the document last modified?} \\
+Sat, 10/12/2005 18:27:46. \\
+\\
+\textbf{c. How many bytes are there in the document being returned?} \\
+Indicated by \texttt{Ranges:} we see that it is 3874 bytes. \\
+\\
+\textbf{d. What are the first 5 bytes of the document being returned? Did the server agree to a persistent connection?} \\
+The first 5 bytes received are \texttt{<!doc}. We see from \texttt{Connection:Keep-Alive} that it is a persistent connection.
+
+
+\subsubsection{Obtain the HTTP/1.1 specification (RFC 2616). Answer the following
+questions: (P6)}
+
+\textbf{a. Explain the mechanism used for signaling between the client and server to indicate that a persistent connection is being closed. Can the client, the server, or both signal the close of a connection?} \\
+According to RFC 2616 8.1.2.1 a persistent connection is closed by putting the close token ''close'' in the header, which can be done by both the server and the client. \\
+\\
+\textbf{b. What encryption services are provided by HTTP?} \\
+HTTP does not provide encryption, this is provided by HTTPS. \\
+\\
+\textbf{c. Can a client open three or more simultaneous connections with a given server?} \\
+RFC 2616 8.1.4 states ''Clients that use persistent connections SHOULD limit the number of
+simultaneous connections that they maintain to a given server.'' which indicates that a client is not limited to any number of simultaneous connections. \\
+\\
+\textbf{d. Either a server or a client may close a transport connection between them if either one detects the connection has been idle for some time. Is it possible that one side starts closing a connection while the other side is transmitting data via this connection? Explain.} \\
+RFC 2616 8.1.4 states that '' A client, server, or proxy MAY close the transport connection at any time. For example, a client might have started to send a new request at the same time that the server has decided to close the "idle" connection. From the server's point of view, the connection is being closed while it was idle, but from the client's point of view, a request is in progress.''. This means that the answer is yes, one side can start closing the connection while the other side is transmitting data.
+
+
+\subsubsection{Suppose within your Web browser, you click on a link to obtain a Web page. The IP address for the associated URL is not cached in your local host, so a DNS lookup is necessary to obtain the IP address. Suppose that $n$ DNS servers are visited before your host receives the IP address from DNS; the successive visits incur an RTT of $RTT_1, \dots , RTT_n$. Further suppose that the Web page associated with the link contains exactly one object, consisting of a large amount of HTML text. Let $RTT_0$ denote the RTT between the local host and the server containing the object. Assuming transmission duration of $0.002 \cdot RTT_0$ of the object, how much time elapses from when the client clicks on the link until the client receives the object? (P7)}
+Time to get the IP is $\sum_{i = 1}^{n} RTT_n$. Once the IP is known it takes $RTT_0$ to set up the TCP connection, $RTT_0$ to request the object and $0.002 \cdot RTT_0$ to receive the object. The total response time is therefore
+\begin{equation*}
+    2.002 \cdot RTT_0 + \sum_{i = 1}^{n} RTT_n
+\end{equation*}
+
+\subsubsection{Consider Problem P7 again and assume $RTT_0 = RTT_1 = RTT_2 = \dots = RTT_n = RTT$, Furthermore, assume a new HTML file, small enough to have negligible transmission time, which references nine equally small objects on the same server. How much time elapses with: (P8)}
+
+\textbf{a. non-persistent HTTP with no parallel TCP connections?} \\
+This connection will require a handshake for each request of an object, meaning that it takes $2 \cdot RTT$ for each object. The total response time is therefore $18 \cdot RTT$. \\
+\\
+\textbf{b. non-persistent HTTP with the browser configured for 6 parallel connections?} \\
+This connection also requires a handshake for each request of an object but since 6 messages can be sent in parallel it takes $2 \cdot RTT$ for the first 6 objects and $2 \cdot RTT$ for the last 3 objects. The total response time is therefore $4 \cdot RTT$. \\
+\\
+\textbf{c. persistent HTTP?} \\
+A singe persistent connection without pipelining needs only transmit a single handshake followed by the requests for each of the objects. The total response time is therefore $10 \cdot RTT$.
+
+
+\subsubsection{Consider Figure 2.12, for which there is an institutional network connected to the Internet. Moreover, assume the access link has been upgraded to 54 Mbps, and the institutional LAN is upgraded to 10 Gbps. Suppose that the average object size is 1,600,000 bits and that the average request rate from the institution's browsers to the origin servers is 24 requests per second. Also suppose that the amount of time it takes from when the router on the Internet side of the access link forwards an HTTP request until it receives the response is three seconds on average (see Section 2.2.5 in \cite{kr}). Model the total average response time as the sum of the average access delay (that is, the delay from Internet router to institution router) and the average Internet delay. For the average access delay, use $\Delta /(1 - \Delta \beta)$, where $\Delta$ is the average time required to send an object over the access link and $\beta$ is the arrival rate of objects to the access link. (P9)}
+
+\textbf{a. Find the total average response time.} \\
+Since we are asked to find the total average response time as the sum
+\begin{equation*}
+    \overline{d}_\text{total} = \overline{d}_\text{access} + \overline{d}_\text{internet}
+\end{equation*}
+(with no LAN delay) we are looking from the point of the institutional router and we can neglect the LAN-connection from the institutional router to the requesting browsers (perhaps because the LAN Rate is high enough for the delay to be negligible. From $\overline{d}_\text{total if hit}$ calculated in b. we see that the additional delay would be 0.0002). \\
+\\
+We have been given that $\overline{d}_\text{internet} = 3 \, \text{s}$. So we only need to calculate the access delay. The time to transmit an object of size $L$ over a link with rate $R$ is $L/R$. Letting $\overline{L}$ be the average size of the object we have that
+\begin{equation*}
+\begin{split}
+    \Delta &= \frac{\overline{L}}{R} \\
+    &= \frac{1 \, 600 \, 000 \, \text{bits/object}}{54 \cdot 10^6 \, \text{bits/s}} \\
+    &= 0.0296 \, \text{s/object}
+\end{split} 
+\end{equation*}
+and
+\begin{equation*}
+    \beta = 24 \, \text{objects/s}
+\end{equation*}
+So using the provided formula we have that the average access delay must be 
+\begin{equation*}
+\begin{split}
+    \overline{d}_\text{access} &= \frac{\Delta}{1 - \Delta \beta} \\
+    &= \frac{0.0296 \, \text{s/object}}{1 - \lr{ \lr{0.0296 \, \text{s/object}} \cdot \lr{ 24 \, \text{objects/s}}}} \\
+    &= 0.1022 \, \text{s/object}
+\end{split}
+\end{equation*}
+The total average response time is therefore
+\begin{equation*}
+\begin{split}
+    \overline{d}_\text{total} &= \overline{d}_\text{access} + \overline{d}_\text{internet} \\
+    &= 0.1022 \, \text{s/object} + 3 \, \text{s/object} \\
+    &= 3.1022 \, \text{s/object}
+\end{split}
+\end{equation*}
+\textbf{b. Now suppose a cache is installed in the institutional LAN. Suppose the miss rate is 0.3. Find the total response time.} \\
+If a request is satisfied by the cache, then the object only has to travel by LAN, and we have that the total average response time is 
+\begin{equation*}
+\begin{split}
+    \overline{d}_\text{total if hit} &= \frac{1 \, 600 \, 000 \, \text{bits/object}}{10 \cdot 10^9 \, \text{bits/s}} \\
+    &= 0.0002 \, \text{s/object}
+\end{split}
+\end{equation*}
+If a request is not satisfied by the cache, then we have the total delay will be the sum of, the time it took to get response from the cache, the time it takes for the cache to get the object from the access router, and the time it takes for the access router to get the object from the internet. We can express this as 
+\begin{equation*}
+    \overline{d}_\text{total if miss} = \overline{d}_\text{LAN} + \overline{d}_\text{access} + \overline{d}_\text{internet}
+\end{equation*}
+where we already know that $\overline{d}_\text{LAN} = 0.0002$ and $\overline{d}_\text{internet} = 3$. \\
+\\
+To find $\overline{d}_\text{access}$ we need to calculate it using the new arrival rate since the traffic has changed as on average only 30\% of all requests are not satisfied by the cache and needs to go through the access and internet links.
+\begin{equation*}
+\begin{split}
+    \beta &= 0.3 \cdot 24 \, \text{objects/s} \\
+    &= 7.2000 \, \text{objects/s}
+\end{split}
+\end{equation*}
+Meaning that we now have
+\begin{equation*}
+    \begin{split}
+        \overline{d}_\text{access} &= \frac{\Delta}{1 - \Delta \beta} \\
+        &= \frac{0.0296 \, \text{s/object}}{1 - \lr{ \lr{0.0296 \, \text{s/object}} \cdot \lr{ 7.2 \, \text{objects/s}}}} \\
+        &= 0.0376 \, \text{s/object}
+\end{split}
+\end{equation*}
+Inserting the values we get
+\begin{equation*}
+\begin{split}
+    \overline{d}_\text{total if miss} &= \overline{d}_\text{LAN} + \overline{d}_\text{access} + \overline{d}_\text{internet} \\
+    &= 0.0002 \, \text{s/object} + 0.0376 \, \text{s/object} + 3 \, \text{s/object} \\
+    &= 3.0378 \, \text{s/object}
+\end{split}
+\end{equation*}
+Since we have that on average the cache misses 30\% of the time we have that the average total response time can be calculated by
+\begin{equation*}
+\begin{split}
+    \overline{d}_\text{total} &= 0.3 \cdot \overline{d}_\text{total if miss}  + \lr{1 - 0.3} \overline{d}_\text{total if hit} \\
+    &= 0.91148 \, \text{s/object}
+\end{split}
+\end{equation*}
+
+
+\subsubsection{Consider a 30-meter link, over which a sender can transmit at a rate of 300 bits/sec in both directions. Suppose that packets containing data are 100,000 bits long, and packets containing only control (e.g., ACK or handshaking) are 200 bits long. Assume that $N$ parallel connections each get $1/N$ of the link bandwidth. Now, consider the HTTP protocol and suppose that each downloaded object is 100 Kbits long, and that the initial downloaded object contains 10 referenced objects from the same sender. Would parallel downloads via parallel instances of non-persistent HTTP make sense in this case? Now consider persistent HTTP. Do you expect significant gains over the non-persistent case? Justify and explain your answer. (P10)}
+
+Since the non-persistent parallel instances share the bandwidth, I expect the persistent solution to be faster as it does not need handshake and ACKs for each object and can use the whole bandwidth. \\
+\\
+For parallel instances of non-persistent HTTP the delay for downloading the objects can be expressed as
+\begin{equation*}
+    d_\text{total} = d_\text{handshake} + d_\text{ACK} + d_\text{request transmit} + d_\text{object transmit}
+\end{equation*}
+since each connection at the same time performs the handshake, gets the ACK, transmits requests and finally transmitting the object (but propagation delay is assumed negligible). Making 10 connection, so that there is one for each object the rate for each connection will be $\frac{300 \, \text{bits/s}}{10}$. The delay can therefore be calculated by
+\begin{equation*}
+\begin{split}
+    d_\text{total, parallel non-persistent} &= d_\text{handshake} + d_\text{ACK} + d_\text{request transmit} + d_\text{object transmit} \\
+    &= 3 \frac{200 \, \text{bits}}{\frac{300 \, \text{bits/s}}{10}} + \frac{100 \cdot 10^3 \, \text{bits}}{\frac{300 \, \text{bits/s}}{10}} \\
+    &= 3353.3333 \, \text{s}
+\end{split}
+\end{equation*}
+The delay for the persistent HTTP can be expressed as
+\begin{equation*}
+    \begin{split}
+        d_\text{total, persistent} &= d_\text{handshake} + d_\text{ACK} + 10 \lr{d_\text{request transmit} + d_\text{object transmit}} \\
+        &= 2 \frac{200 \, \text{bits}}{300 \, \text{bits/s}} + 10 \lr{\frac{200 \, \text{bits}}{300 \, \text{bits/s}} + \frac{100 \cdot 10^3 \, \text{bits}}{300 \, \text{bits/s}}} \\
+        &= 3341.3333 \, \text{s}
+\end{split}
+\end{equation*}
+So the persistent connection is faster than the parallel non-persistent.
+
+\subsubsection{Consider the scenario introduced in the previous problem. Now, suppose that the link is shared by Alice with Bob. Alice does not use parallel instances of non-persistent HTTP while Bob uses non-persistent HTTP with five parallel
+downloads each. (P11)}
+
+\textbf{a. Does Alice have any advantage over Bob? Why or why not?} \\
+No, because Bob gets a total of $5/6$ of the rate while Alice gets $1/6$. \\
+\\
+\textbf{b. If Alice opens five parallel instances of non-persistent HTTP, then would her parallel connections be beneficial? Why or why not?} \\
+Yes, more than in the previous case of a. since all parallel connection share the rate equally. Therefore Alice now has $5/10 = 1/2$ of the rate while bob also gets $1/2$, so they now share equally is if both used a single persistent connection.
+
+
+\subsubsection{Write a simple TCP program for a server that accepts lines of input from a client and prints the lines onto the server's standard output. (You can do this by modifying the TCPServer.py program in the text.) Compile and execute your
+program. On any other machine that contains a Web browser, set the proxy server in the browser to the host that is running your server program; also configure the port number appropriately. Your browser should now send its GET request messages to your server, and your server should display the messages on its standard output. Use this platform to determine whether your browser generates conditional GET messages for objects that are locally cached. (P12)}
+
+The server was implemented as seen below
+\lstinputlisting[language=Python]{2_application_layer/2.8_problems/src/p12.py}
+A GET was sent to the server by inserting http://localhost:12000/ in a browser. This made the server print the following:
+\begin{verbatim}
+GET / HTTP/1.1
+Host: localhost:12000
+Connection: keep-alive
+sec-ch-ua: "Brave";v="117", "Not;A=Brand";v="8", "Chromium";v="117"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 
+    (KHTML,like Gecko) Chrome/117.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,
+    image/avif,image/webpimage/apng,*/*;q=0.8
+Sec-GPC: 1
+Accept-Language: en-GB,en
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+\end{verbatim}
+Afterwards i get the error for line 12 \texttt{OSError: [Errno 9] Bad file descriptor}.
+
+
+
+\subsubsection{Consider sending over HTTP/2 a Web page that consists of one video file and three images. Suppose that the video clip is transported as 5000 frames, and each image captures four frames. (P13)}
+
+\textbf{a. If all the video frames are sent first without interleaving, how many ''frame times'' are needed until all images are sent?} \\
+If the video is sent first then 5000 frames pass before the images can be sent. The images will be sent in 12 frames afterwards, meaning that a total of 5012 frames are sent before all the images are sent. \\
+\\
+\textbf{b. If frames are interleaved, how many frame times are needed until all three images are sent?} \\
+With interleaving first a video frame is sent, then image one, then image two, then image three and then a video frame etc. until every image is sent, whereafter only video frames are sent. This means that each cycle of 4 frames sends 1 frame of each message. So the images will be sent after 3 cycles meaning 12 frames.
+
+
+\subsubsection{Consider the Web page in problem 13. Now HTTP/2 prioritization is employed. Suppose all the images are given priority over the video clip, and that the first image is given priority over the second image, the second image over the third image, and so on. How many frame times will be needed until the second image is sent? (P14)}
+
+Now the first image will be sent after 3 frames and so will the rest of the images. So the second image will be sent after 6 frames.
+
+\subsubsection{What is the difference between \texttt{MAIL FROM}: in SMTP and \texttt{From}: in the mail message itself? (P15)}
+
+\texttt{MAIL FROM} exists in SMTP for server communication and is used only to route and deliver the message and is not visible to the user. \texttt{From} in the header of the mail message itself on the other hand is visible to the user and is used to display the e-mail address of the sender.
+
+
+\subsubsection{How does SMTP mark the end of a message body? How about HTTP? Can HTTP use the same method as SMTP to mark the end of a message body? Explain. (P16)}
+
+SMTP marks the end of a message with a line consisting only of a period. HTTP does not rely on specific characters to indicate the end of a message but instead uses the ''Content-Length'' header used to specify the length of the message body. \\
+\\
+The two protocols are very different since SMTP is used for transferring simple messages while HTTP is used for transferring all kinds of structured data. This kind of data might be binary encoded in such a way that a period is part of the message and could mistakenly be interpreted as the end of the message. Therefore to ensure that all of the content is send through HTTP the safest way to ensure this is using the ''Content-Length'' header.
+
+\subsubsection{Read RFC 5321 for SMTP. What does MTA stand for? Consider the following received spam e-mail (modified from a real spam e-mail). Assuming only the originator of this spam e-mail is malicious and all other hosts are honest, identify the malacious host that has generated this spam e-mail. (P17)}
+
+\begin{verbatim}
+From - Fri Nov 07 13:41:30 2008
+Return-Path: <tennis5@pp33head.com>
+Received: from barmail.cs.umass.edu (barmail.cs.umass.edu
+[128.119.240.3]) by cs.umass.edu (8.13.1/8.12.6) for
+<hg@cs.umass.edu>; Fri, 7 Nov 2008 13:27:10 -0500
+Received: from asusus-4b96 (localhost [127.0.0.1]) by
+barmail.cs.umass.edu (Spam Firewall) for <hg@cs.umass.edu>; Fri, 7
+Nov 2008 13:27:07 -0500 (EST)
+Received: from asusus-4b96 ([58.88.21.177]) by barmail.cs.umass.edu
+for <hg@cs.umass.edu>; Fri, 07 Nov 2008 13:27:07 -0500 (EST)
+Received: from [58.88.21.177] by inbnd55.exchangeddd.
+com; Sat, 8
+Nov 2008 01:27:07 +0700
+From: ”Jonny” <tennis5@pp33head.com>
+To: <hg@cs.umass.edu>
+Subject: How to secure your savings
+\end{verbatim}
+\noindent
+MTA stands for Mail Transfer Agent and such are nodes on the links from sender to receiver that is responsible for routing and delivering e-mails. The lines show the intermediary MTAs from last to first. We can therefore find the originator of the e-mail on the bottom of this list which is identified by the IP address 58.88.21.177.
+
+
+\subsubsection{Answer the following: (P18)}
+
+\textbf{a. What is a \textit{whois} database?} \\
+A whois database is a publicly accessible database, that stores the registered domain names and their registrants.\\
+\\
+\textbf{b. Use various whois databases on the Internet to obtain the names of two DNS servers. Indicate which whois databases you used.} \\
+From \url{who.is} i looked up \texttt{ekstrabladet.dk}, which had a DNS server hostname \texttt{ns-1196.awsdns-21.org} and \texttt{youtube.com}, which had hostname \texttt{ns1.google.com} as on of its DNS servers. \\
+\\
+\textbf{c. Use nslookup on your local host to send DNS queries to three DNS servers: your local DNS server and the two DNS servers you found in part (b). Try querying for Type A, NS, and MX reports. Summarize your findings.} \\
+From ekstrabladet.dk:
+\begin{verbatim}
+    >nslookup ekstrabladet.dk
+    Server:		8.8.8.8
+    Address:	8.8.8.8#53
+    
+    Non-authoritative answer:
+    Name:	ekstrabladet.dk
+    Address: 91.214.22.25
+\end{verbatim}
+\begin{verbatim}
+    >nslookup -type=ns ekstrabladet.dk         
+    Server:		8.8.8.8
+    Address:	8.8.8.8#53
+    
+    Non-authoritative answer:
+    ekstrabladet.dk	nameserver = ns-1196.awsdns-21.org.
+    ekstrabladet.dk	nameserver = ns-177.awsdns-22.com.
+    ekstrabladet.dk	nameserver = ns-1853.awsdns-39.co.uk.
+    ekstrabladet.dk	nameserver = ns-525.awsdns-01.net.
+    
+    Authoritative answers can be found from:
+    
+\end{verbatim}
+From youtube.com:
+\begin{verbatim}
+    >nslookup youtube.com
+    Server:		8.8.8.8
+    Address:	8.8.8.8#53
+    
+    Non-authoritative answer:
+    Name:	youtube.com
+    Address: 172.217.174.110
+\end{verbatim}
+\begin{verbatim}
+    >nslookup -type=mx youtube.com    
+    Server:		8.8.8.8
+    Address:	8.8.8.8#53
+    
+    Non-authoritative answer:
+    youtube.com	mail exchanger = 0 smtp.google.com.
+    
+    Authoritative answers can be found from:
+    
+\end{verbatim}
+From local DNS:
+\begin{verbatim}
+    >nslookup 8.8.8.8
+    Server:		8.8.8.8
+    Address:	8.8.8.8#53
+
+    Non-authoritative answer:
+    8.8.8.8.in-addr.arpa	name = dns.google.
+\end{verbatim}
+\noindent
+\\
+\textbf{d. Use nslookup to find a Web server that has multiple IP addresses. Does the Web server of your institution (school or company) have multiple IP addresses?} \\
+Using \texttt{nslookup amazon.com} we see that Amazon has multiple IP addresses. The web server of my school does not have multiple but only a single IP address.\\
+\\
+\textbf{e. Use the ARIN whois database to determine the IP address range used by your university.} \\
+Using \url{https://search.arin.net/rdap/} for \texttt{di.ku.dk} i get 130.225.0.0 - 130.226.255.255. \\
+\\
+\textbf{f. Describe how an attacker can use whois databases and the nslookup tool to perform reconnaissance on an institution before launching an attack.} \\
+The \texttt{nslookup} tool can provide the IP address from the domain name. The IP address can then be used in a whois to provide the IP address range, which an attacker can use this range for different attacks for example a denial of service (DoS) attack. \\
+\\
+\textbf{g. Discuss why whois databases should be publicly available.} \\
+The whois database can be used to expose attackers by analyzing the domain from which the attacks are coming from.
+
+\subsubsection{In this problem, we use the useful \textit{dig} tool available on Unix and Linux hosts to explore the hierarchy of DNS servers. Recall that in Figure 2.19, a DNS server in the DNS hierarchy delegates a DNS query to a DNS server lower in the hierarchy, by sending back to the DNS client the name of that lower-level DNS server. First read the man page for \textit{dig}, and then answer the following questions. (P19)}
+
+\textbf{a. Starting with a root DNS server (from one of the root servers [a-m]. root-servers.net), initiate a sequence of queries for the IP address for your department's Web server by using \textit{dig}. Show the list of the names of DNS
+servers in the delegation chain in answering your query.} \\
+\begin{verbatim}
+    >dig +norecurse @a.root-servers.net any di.ku.dk
+
+    ; <<>> DiG 9.10.6 <<>> +norecurse @a.root-servers.net any di.ku.dk
+    ; (1 server found)
+    ;; global options: +cmd
+    ;; Got answer:
+    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 30913
+    ;; flags: qr; QUERY: 1, ANSWER: 0, AUTHORITY: 6, ADDITIONAL: 13
+    
+    ;; OPT PSEUDOSECTION:
+    ; EDNS: version: 0, flags:; udp: 4096
+    ;; QUESTION SECTION:
+    ;di.ku.dk.			IN	ANY
+    
+    ;; AUTHORITY SECTION:
+    dk.			172800	IN	NS	s.nic.dk.
+    dk.			172800	IN	NS	d.nic.dk.
+    dk.			172800	IN	NS	c.nic.dk.
+    dk.			172800	IN	NS	l.nic.dk.
+    dk.			172800	IN	NS	b.nic.dk.
+    dk.			172800	IN	NS	a.nic.dk.
+    
+    ;; ADDITIONAL SECTION:
+    s.nic.dk.		172800	IN	A	193.176.144.15
+    s.nic.dk.		172800	IN	AAAA	2a00:d78:0:102:193:176:144:15
+    d.nic.dk.		172800	IN	A	185.159.198.45
+    d.nic.dk.		172800	IN	AAAA	2620:10a:80ab::45
+    c.nic.dk.		172800	IN	A	194.0.46.53
+    c.nic.dk.		172800	IN	AAAA	2001:678:74::53
+    l.nic.dk.		172800	IN	A	130.226.213.138
+    l.nic.dk.		172800	IN	AAAA	2001:878:0:e000:82:e2:d5:8a
+    b.nic.dk.		172800	IN	A	193.163.102.222
+    b.nic.dk.		172800	IN	AAAA	2a01:630:0:80::53
+    a.nic.dk.		172800	IN	A	212.88.78.122
+    a.nic.dk.		172800	IN	AAAA	2001:1580:0:180d::122
+    
+    ;; Query time: 51 msec
+    ;; SERVER: 198.41.0.4#53(198.41.0.4)
+    ;; WHEN: Tue Oct 03 13:39:22 JST 2023
+    ;; MSG SIZE  rcvd: 401
+    
+\end{verbatim}
+We send a query further to the first listed DNS server
+\begin{verbatim}
+    >dig +norecurse @s.nic.dk any di.ku.dk          
+
+    ; <<>> DiG 9.10.6 <<>> +norecurse @s.nic.dk any di.ku.dk
+    ; (1 server found)
+    ;; global options: +cmd
+    ;; Got answer:
+    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 7621
+    ;; flags: qr; QUERY: 1, ANSWER: 0, AUTHORITY: 2, ADDITIONAL: 3
+    
+    ;; OPT PSEUDOSECTION:
+    ; EDNS: version: 0, flags:; udp: 1232
+    ;; QUESTION SECTION:
+    ;di.ku.dk.			IN	ANY
+    
+    ;; AUTHORITY SECTION:
+    ku.dk.			86400	IN	NS	ns1.ku.dk.
+    ku.dk.			86400	IN	NS	ns2.ku.dk.
+    
+    ;; ADDITIONAL SECTION:
+    ns1.ku.dk.		86400	IN	A	192.38.110.174
+    ns2.ku.dk.		86400	IN	A	192.38.110.190
+    
+    ;; Query time: 598 msec
+    ;; SERVER: 193.176.144.15#53(193.176.144.15)
+    ;; WHEN: Tue Oct 03 13:44:06 JST 2023
+    ;; MSG SIZE  rcvd: 105
+\end{verbatim}
+Again we send a query further to the first listed DNS server
+\begin{verbatim}
+    >dig +norecurse @ns1.ku.dk. any di.ku.dk
+    ;; Truncated, retrying in TCP mode.
+    
+    ; <<>> DiG 9.10.6 <<>> +norecurse @ns1.ku.dk. any di.ku.dk
+    ; (1 server found)
+    ;; global options: +cmd
+    ;; Got answer:
+    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 2758
+    ;; flags: qr aa; QUERY: 1, ANSWER: 7, AUTHORITY: 0, ADDITIONAL: 1
+    
+    ;; OPT PSEUDOSECTION:
+    ; EDNS: version: 0, flags:; udp: 1232
+    ;; QUESTION SECTION:
+    ;di.ku.dk.			IN	ANY
+    
+    ;; ANSWER SECTION:
+    di.ku.dk.		300	IN	A	130.226.237.173
+    di.ku.dk.		3600	IN	MX	10 ku-dk.mail.protection.outlook.com.
+    di.ku.dk.		3600	IN	NS	ns1.ku.dk.
+    di.ku.dk.		3600	IN	NS	ns2.ku.dk.
+    di.ku.dk.		3600	IN	TXT	"v=msv1 t=435F474F-578B-4019-BC16-65A1E9ADBA97"
+    di.ku.dk.		3600	IN	TXT	"v=spf1 include:bulk.spf.ku.dk include:spf.protection.
+        outlook.com a:unicph-gw.ku.dk -all"
+    di.ku.dk.		3600	IN	SOA	ns1.ku.dk. hostmaster.adm.ku.dk. 2023092801 10800 
+        3600 604800 3600
+    
+    ;; Query time: 201 msec
+    ;; SERVER: 192.38.110.174#53(192.38.110.174)
+    ;; WHEN: Tue Oct 03 13:47:50 JST 2023
+    ;; MSG SIZE  rcvd: 347
+\end{verbatim}
+which gives us the IP-address (and additional info) for \texttt{di.ku.dk}. \\
+\\
+\textbf{b. Repeat part (a) for several popular Web sites, such as google.com, yahoo.com, or amazon.com.} \\
+The end result for google is
+\begin{verbatim}
+    >dig google.com 
+
+    ; <<>> DiG 9.10.6 <<>> google.com
+    ;; global options: +cmd
+    ;; Got answer:
+    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 36840
+    ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+    
+    ;; OPT PSEUDOSECTION:
+    ; EDNS: version: 0, flags:; udp: 512
+    ;; QUESTION SECTION:
+    ;google.com.			IN	A
+    
+    ;; ANSWER SECTION:
+    google.com.		33	IN	A	142.251.42.206
+    
+    ;; Query time: 24 msec
+    ;; SERVER: 8.8.8.8#53(8.8.8.8)
+    ;; WHEN: Tue Oct 03 13:58:05 JST 2023
+    ;; MSG SIZE  rcvd: 55
+\end{verbatim}
+For the other websites writing down the result is too tedious.
+
+\subsubsection{Consider the scenarios illustrated in Figures 2.12 and 2.13. Assume the rate of the institutional network is $R_l$ and that of the bottleneck link is $R_b$. Suppose there are $N$ clients requesting a file of size $L$ with HTTP at the same time. For what values of $R_l$ would the file transfer takes less time when a proxy is installed at the institutional network? (Assume the RTT between a client and any other host in the institutional network is negligible.) (P20)}
+
+For $R_b \geq R_l$ the institutional network will be the bottleneck for the whole connection, and since we assume RTT to be negligible it will not matter, whether the institution installs a proxy or if the file has to be transferred all the way to the public internet. However if $R_b < R_l$ then a file transfer will be faster when a proxy is installed in the institutional network.
+
+
+\subsubsection{Suppose that your department has a local DNS server for all computers in the department. You are an ordinary user (i.e., not a network/system administrator). Can you determine if an external Web site was likely accessed from a computer in your department a couple of seconds ago? Explain. (P21)}
+
+Yes, if i am determining this for a specific web site. In that case it is possible to check if this website is cached in the local DNS server with the \texttt{dig +norecurse} command, since this will show if the IP-address is found at the DNS server of if another DNS server has to be contacted to get this information.
+
+
+\subsubsection{Consider distributing a file of $F = 10$ Gbits to $N$ peers. The server has an upload rate of $u_s = 1$ Gbps, and each peer has a download rate of $d_i = 200$ Mbps and an upload rate of $u$. For $N = 10$, $100$, and $1,000$ and $u = 2$ Mbps, $10$ Mbps, and $100$ Mbps, prepare a table giving the minimum distribution time in seconds for each of the combinations of $N$ and $u$ for both client-server distribution and P2P distribution. (P22)}
+
+For calculating the minimum distribution time for the client-server we use equation 2.1 from \cite{kr}
+\begin{equation*}
+\begin{split}
+    d_\text{cs} &= \max \lrc{N \frac{F}{u_s}, \frac{F}{d_\text{min}}} \\
+    &= \max \lrc{N\frac{10 \cdot 10^9 \, \text{bits}}{1 \cdot 10^9 \, \text{bits/s}}, \frac{10 \cdot 10^9 \, \text{bits}}{200 \cdot 10^6 \, \text{bits/s}}} \\
+    &= \max \lrc{10N \, \text{s}, 50 \, \text{s}} \\
+\end{split}
+\end{equation*}
+since $d_\text{min} = d_i$. Inserting the values for $N$ we get \\
+\begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{Client-server} & $N = 10$ & $N = 100$ & $N = 1000$ \\
+    \hline 
+    $\forall u$ & 100 s & 1000 s & 10000 s \\
+    \hline
+\end{tabular} \\
+\\
+For calculating the minimum distribution time for the P2P network we use equation 2.3 from \cite{kr}
+\begin{equation*}
+\begin{split}
+    d_\text{P2P} &= \max \lrc{\frac{F}{u_s}, \frac{F}{d_\text{min}}, \frac{NF}{u_s + \sum_{i=1}^N u_i}} \\
+    &= \max \lrc{\frac{F}{u_s}, \frac{F}{d_i}, \frac{NF}{u_s + uN}} \\
+    &= \max \lrc{\frac{F}{u_s}, \frac{F}{d_i}, \frac{NF}{u_s + uN}} \\
+    &= \max \lrc{10 \, \text{s}, 50 \, \text{s}, N\frac{10 \cdot 10^9 \, \text{bits}}{10^9 \, \text{bits/s} + uN}} \\
+\end{split}
+\end{equation*}
+where the second equality uses that $d_\text{min} = d_i$ and $u_i = u$ for $i = 1, \dots, N$.
+Inserting the values for $N$ and $u$ we get \\
+\begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{P2P} & $N = 10$ & $N = 100$ & $N = 1000$ \\
+    \hline 
+    $u = 2$ Mbps & 98.04 s & 833.33 s & 3333.33 s \\
+    \hline
+    $u = 10$ Mbps & 90.91 s & 500.00 s & 909.09 s \\
+    \hline
+    $u = 100$ Mbps & 50 s & 90.91 s & 99.01 s \\
+    \hline
+\end{tabular}\\
+\subsubsection{Consider distributing a file of $F$ bits to $N$ peers using a client-server architecture. Assume a fluid model where the server can simultaneously transmit to multiple peers, transmitting to each peer at different rates, as long as the combined rate does not exceed $u_s$. (P23)}
+
+\textbf{a. Suppose that $u_s / N \leq d_\text{min}$. Specify a distribution scheme that has a distribution time of $NF/u_s$.} \\
+In this case it takes longer for the server to distribute the file to all the peers (which takes the time $\frac{F}{u_s/N}$) than it takes for the slowest peer to download the file (which takes the time $\frac{F}{d_\text{min}}$). The quickest scheme will therefore in this case be where the server distributes the file to all the peers in parallel each transfer with rate $u_s/N$. Since the peers can download the file faster than it is distributed it will take $\frac{F}{u_s/N} = NF/u_s$ time for every peer to receive the file. \\
+\\
+\textbf{b. Suppose that $u_s / N \geq d_\text{min}$. Specify a distribution scheme that has a distribution time of $F / d_\text{min}$.} \\
+Here we have the opposite case. In this case we have that the peers download the file slower (which will take the time $F/d_\text{min}$) than it the file can be distributed (which would take the time $NF/u_s$). The quickest scheme will therefore be where the server distributed the file in parallel to each peer at a rate of $d_\text{min}$. Since each peer receives the file at rate $d_\text{min}$ it will take $F/d_\text{min}$ time for the file to be received. \\
+\\
+\textbf{c. Conclude that the minimum distribution time is in general given by $\max \lrc{NF/u_s, F/d_\text{min}}$.} \\
+We see that if $NF/u_s \geq F/d_\text{min}$ we must have that $u_s / N \leq d_\text{min}$ for which we know from part a that $NF/u_s$ is the minimum distribution time. Similarly if $NF/u_s \leq F/d_\text{min}$ we must have that $u_s / N \geq d_\text{min}$ for which we know from part b that $F/d_\text{min}$ is the minimum distribution time. Combining this with the fact that section 2.5 in \cite{kr} shows that $D_{\text{CS}} \geq \max \lrc{\frac{NF}{u_s} , \frac{F}{d_{\text{min}}}}$ we can conclude that the minimum distribution time is in general given by $\max \lrc{NF/u_s, F/d_\text{min}}$. \\
+
+
+\subsubsection{Consider distributing a file of $F$ bits to $N$ peers using a P2P architecture. Assume a fluid model. For simplicity assume that $d_\text{min}$ is very large, so that peer download bandwidth is never a bottleneck. (P24)}
+
+\textbf{a. Suppose that $u_s \leq (u_s + u_1 + \dots + u_N)/N$. Specify a distribution scheme that has a distribution time of $F/u_s$.} \\
+In this case the average upload speed on the network is higher or equal than the upload speed of the server. The server should therefore distribute different parts of the file to each of the peers so that they can distribute help distribute their own part of the file to the other peers. This is done most efficiently by making the size of the part proportional to the upload speed of the peers, so the faster peers distribute more of the file. To avoid bottlenecks caused by the server we should have the servers upload to each peer in parallel with a upload speed proportional to the peers upload speed. \\
+\\
+We define $u \equiv u_1 + u_2 + \dots + u_N$ and divide the file into $N$ parts and distribute part $i$ with size $\frac{u_i}{u}F$ to peer $i$. This is done at rate $r_i = \frac{u_i}{u}u_s$ which satisfies $r_1 + r_2 + \dots + r_N = u_s$ meaning that the server uses its aggregate upload rate and no more. We also have that each peer $i$ forward the bits it receives in parallel to the other $N-1$ peers with of rate of $r_i$ for each other peer. The aggregate forwarding rate for peer $i$ is therefore $r_i(N-1) = \frac{u_i}{u}u_s(N-1)$, which satisfies not being larger than the aggregate uploading speed for peer $i$ since
+\begin{equation*}
+\begin{split}
+    (N-1)r_i &= (N-1)\frac{u_i}{u}u_s \\
+    &= \frac{u_s u_i N - u_s u_i}{u} \\
+    &= u_i \frac{u_s N - u_s}{u} \\
+    &\leq u_i
+\end{split}
+\end{equation*}
+because
+\begin{equation*}
+\begin{split}
+    \frac{u_s N - u_s}{u} &\leq 1 \Longleftrightarrow \\
+    u_s N - u_s &\leq u \Longleftrightarrow \\
+    u_s N &\leq u + u_s \Longleftrightarrow \\
+    u_s &\leq \frac{u + u_s}{N}
+\end{split}
+\end{equation*}
+where the last inequality is the given assumption that the server upload rate is smaller or equal to the average upload rate on the network. Having established that the distribution scheme possible and does not break any restrictions on the network we can analyze the aggregate rate that each peer receives the file at. We have that peer $i$ receives $r_i$ from the server and $\sum_{j \neq i} r_j$ from the other peers. This means that the aggregate received rate is 
+\begin{equation*}
+    r_i + \sum_{j \neq i} r_j = u_s
+\end{equation*}
+which means that the each peer receives the file in $F/u_s$ time. \\
+\\
+\textbf{b. Suppose that $u_s \geq (u_s + u_1 + \dots + u_N)/N$. Specify a distribution scheme that has a distribution time of $NF/(u_s + u_1 + \dots + u_N)$.} \\
+We know have that the upload rate of the server is higher than the average upload speed on the network. We therefore establish a scheme where the server like before break the file into different parts and sends each part to individual peers in parallel for them to redistribute among them in parallel as they receive the bits from their part. However since the upload rate of the server is higher than the average on the network, we break the file into $N+1$ parts where the $N$ peers redistribute these $N$ parts as described above while the server simultaneously transmits the $N+1$th packet to every peer. This means that now the server gives each peer their part to redistribute while managing the redistribution of the last part by itself by transmitting it to all of the peers directly. \\
+\\
+As before the server distributes the part $i$ to peer $i$ at a rate proportional to peer $i$'s upload rate $r_i = \frac{u_i}{N-1}$. It uses the remaining of its upload rate to distribute the $N+1$ part at rate $r_{N+1} = \frac{u_s - \frac{u}{N-1}}{N}$ to each peer. The aggregate upload rate of the server thus satisfies
+\begin{equation*}
+\begin{split}
+    r_1 + r_2 + \dots + N r_{N+1} &= \frac{u_1}{N-1} + \frac{u_2}{N-1} + \dots + \frac{u_N}{N-1} + u_s - \frac{u}{N-1} \\
+    &= u_s
+\end{split}
+\end{equation*}
+by definition of $u$. Meaning that the aggregate upload rate of the server is equal to (and therefore does not exceed) the servers total upload rate. Since peer $i$ redistributes part $i$ by rate $r_i$, we have that the aggregate send rate of peer $i$ satisfies $(N-1)r_i = (N-1)u_i/(N-1) = u_i$, so that each peers aggregate upload rate is equal to (and does not exceed) its total upload rate. Each peer $i$ receives $r_i + r_{N+1}$ from the server and $\sum_{j \neq i} r_j$ from the other peers. So the aggregate rate of received bits for peer $i$ is 
+\begin{equation*}
+\begin{split}
+    r_i + r_{N + 1} + \sum_{j \neq i} r_j &= r_{N+1} + \sum_i r_i \\
+    &= r_{N+1} + \frac{u}{N - 1} \\
+    &= \frac{u_s - \frac{u}{N-1}}{N} + \frac{u}{N - 1} \\
+    &= \frac{u_s - \frac{u}{N-1}}{N} + \frac{\frac{uN}{N - 1}}{N} \\
+    &= \frac{u_s + \frac{u \lr{N - 1}}{N - 1}}{N} \\
+    &= \frac{u_s + u}{N} 
+\end{split}
+\end{equation*}
+which means that each peer receives the file in $\frac{F}{\frac{u_s + u}{N}} = NF/(u_s + u) = NF/(u_s + u_1 + u_2 + \dots + u_N)$ time. \\
+\\
+\textbf{c. Conclude that the minimum distribution time is in general given by \\ $\max \lrc{F/u_s, NF/(u_s + u_1 + \dots + u_N)}$.} \\
+Combining equation 2.2 from \cite{kr} with the fact the results shows by part a and b we get the conclusion that 
+\begin{equation*}
+    D_{\text{P2P}} = \max \lrc{F/u_s, NF/(u_s + u_1 + \dots + u_N)}
+\end{equation*}
+
+
+\subsubsection{Consider an overlay network with $N$ active peers, with each pair of peers having an active TCP connection. Additionally, suppose that the TCP connections pass through a total of $M$ routers. How many nodes and edges are there in the corresponding overlay network? (P25)}
+
+
+From the wording it sounds as if every connection pass through exactly $M$ routers, but i will assume that there is $M$ routers and that each connection only pass through maximum all of these $M$ routers. Otherwise neighboring peers, who could connect using one router would take a long detour through $M$ routers, which is suboptimal. \\
+\\
+Since there is $N$ peers that each are connected through $M$ routers (both which acts as nodes) there must be $M+N$ nodes. Each peer must be connected to the network of routers so we know that there must be an edge from each peer to the network of routers totalling $N$ edges. We do not know how the network of routers are structured, but the case for most edges will be when every router is directly connected to each other. In this case the network of routers will have $\frac{M(M-1)}{2}$ edges (each $M$ router connects to the $M-1$ other router, which we divide by 2 for having counting each connection twice). Therefore the total number of edges is at most $N + \frac{M(M-1)}{2}$.
+
+\subsubsection{Suppose Bob joins a BitTorrent torrent, but he does not want to upload any data to any other peers (he wants to be a so-called free-rider). (P26)}
+
+\textbf{a. Alice who has been using BitTorrent tells Bob that he cannot receive a complete copy of the file that is shared by the swarm. Is Alice correct or not? Why?} \\
+Alice is not correct. It is true that BitTorrent implements a tit-for-tat incentive mechanism, such that peers who upload data are unchoked and thus gets data uploaded from other peers. However without uploading any data Bob can become optimistically unchoked, which is a mechanism that allows new peers to get data to upload, so that they are able to become part of the swarm. Bob can therefore receive a complete file by being optimistically unchoked even if he does not upload any data. \\
+\\
+\textbf{b. Charlie claims that Alice is wrong and that he has even been using a collection of multiple computers (with distinct IP addresses) in the computer lab in his department to make his downloads faster, using some additional coordination scripting. What could his script have done?} \\
+Charlie might have used the script to redirect traffic through multiple different IP-addresses. In this way he will have multiple peers in the network and thus a higher chance of being optimistically unchoked. He might request different parts of a file on the different computers with his coordination script and afterwards collect all the parts on one computer. \\
+
+
+\subsubsection{Consider a DASH system for which there are $N$ video versions (at $N$ different rates and qualities) and $N$ audio versions (at N different rates and qualities). Suppose we want to allow the player to choose at any time any of the $N$ video versions and any of the $N$ audio versions. (P27)}
+
+\textbf{a. If we create files so that the audio is mixed in with the video, so the server sends only one media stream at given time, how many files will the server need to store (each a different URL)?} \\
+Since it needs to store a file with every combination pair of video and audio version, for which there is $N^2$ combinations, it will need to store $N^2$ files. \\
+\\
+\textbf{b. If the server instead sends the audio and video streams separately and has the client synchronize the streams, how many files will the server need to store?} \\
+Then it will need to store one file for each of the video versions, for which there is $N$, and one file for each of the audio versions, for which there is also $N$. Therefore a total of $2N$ files. \\
+
+
+\subsubsection{Install the Python programs TCPClient and UDPClient on one host and TCPServer and UDPServer on another host. (P28)}
+
+\textbf{a. Suppose you run TCPServer and you try to connect using UDPClient. What happens? Why?} \\
+Nothing happens. The request is sent to the server, but since the server is not listening for UDP requests it does not respond. And since the UDP protocol does not establish a connection with handshaking before sending request, no information about the missing connection is received at the client. \\
+\\
+\textbf{b. Suppose you run UDPClient before you run UDPServer. What happens? Why?} \\
+Again the UDPClient does not receive any response from the server after sending its request. This is because the request was send before the server was active to receive it, and since no error-handling is performed by UDP the client will never know, that its request was not received. \\
+\\
+\textbf{c. What happens if you hardwire in the python client and server programs different port numbers for the client and server sides in either a TCP or UDP client-server pair?} \\
+For UDP the same happens as in part b, again because the server does not receive the request. This time not because it was not active but because it was not listening to the port that the UDPClient sent the request to. \\
+\\
+For TCP the client gets the following error message:
+\begin{verbatim}
+ConnectionRefusedError: [Errno 61] Connection refused
+\end{verbatim}
+meaning that the handshake for establishing connection was refused. Which is because the server was not listening to the port that the client sent its request.
+
+\subsubsection{Suppose that in UDPClient.py, after we create the socket, we add the line:
+\texttt{clientSocket.bind(('', 5432))}. Will it become necessary to change UDPServer.py? What are the port numbers for the sockets in UDPClient and UDPServer? What were they before making this change? (P29)}
+
+No, it is not necessary to change UDPServer.py since the server still receives the request and responds correctly. This is because all \texttt{clientSocket.bind(('', 5432))} does is specify that port number 5432 should be used when creating the client socket. Before this line was added the port number was instead chosen by the operating system. The portnumber of the client does not need to be anything specific for UDPServer to work, as UDPServer can uravel the client's portnumber fra the datagram that it receives from the client. \\
+\\
+The port number for the socket in UDPClient is 5432, since this is the port number that is specified in the \texttt{clientSocket.bind(('', 5432))} line. The port number for the server is specified in both UDPClient and UDPServer to be 12000. \\
+\\
+UDPServer still had the same port before adding the line, but the UDPClient had a random port number chosen by the operating system.
+
+\subsubsection{Can you configure your browser to open multiple simultaneous connections to a Web site? What are the advantages and disadvantages of having a large number of simultaneous TCP connections? (P30)}
+
+Yes, but it can be considered against best practices and website terms of service. Browsers typically limit the number of concurrent connections to a single domain for efficiency and to avoid overloading servers. \\
+\\
+An advantage of multiple TCP connections are that they enable resources to be fetched parallel thus improving performance. Another is that it can provide redundancy, such that if one connection fails another can continue thus ensuring uninterrupted service. A disadvantage is that that multiple connection consume more resources, which can strain a servers CPU and memory, it can also cause increased latency as servers must manage a larger number of incoming requests. Finally it can be a disadvantage as it can cause network congestion.
+
+
+
+\subsubsection{We have seen that Internet TCP sockets treat the data being sent as a byte stream but UDP sockets recognize message boundaries. What are one advantage and one disadvantage of byte-oriented API versus having the API explicitly recognize and preserve application-defined message boundaries? (P31)}
+\textbf{TCP}:
+\begin{itemize}
+    \item \textbf{Advantage}: One advantage of a byte-oriented API, such as TCP, is that it provides a continuous stream of data, which can be more efficient for streaming large amounts of data, like video or file transfers, as it eliminates the need to manage message boundaries explicitly. This can lead to higher throughput in certain scenarios.
+    \item \textbf{Disadvantage}: A disadvantage is that it may not be suitable for applications where preserving message boundaries is crucial. In protocols like HTTP, where requests and responses are structured as discrete messages, additional parsing is required to identify and separate these messages from the continuous byte stream. This parsing overhead can introduce complexity and potentially result in performance bottlenecks.
+\end{itemize}
+\textbf{UDP}:
+\begin{itemize}
+    \item \textbf{Advantage}: On the other hand, a message-oriented API like UDP explicitly recognizes and preserves message boundaries. This is advantageous for applications where message integrity and structure are vital, such as real-time communication or gaming. It simplifies message processing, making it easier to identify and handle individual messages.
+    \item \textbf{Disadvantage}: A disadvantage of UDP's message-oriented approach is that it does not provide the same reliability and ordering guarantees as TCP. Messages may be lost, duplicated, or arrive out of order. Applications must implement their own mechanisms for dealing with these issues if needed, which can add complexity.
+\end{itemize}
+
+
+
+\subsubsection{What is the Apache Web server? How much does it cost? What functionality does it currently have? You may want to look at Wikipedia to answer this question. (P32)}
+
+The Apache Web Server is a HTTP based free and open source web server software that is used to serve web pages. It is the most popular web server software on the internet. It is free to use and is licensed under the Apache License 2.0. It is currently developed and maintained by the Apache Software Foundation. \\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

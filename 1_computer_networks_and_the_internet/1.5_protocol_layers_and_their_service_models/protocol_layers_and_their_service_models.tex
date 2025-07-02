@@ -1,0 +1,27 @@
+\subsection{Protocol Layers and Their Service Models}
+
+\subsubsection{If two end-systems are connected through multiple routers and the data-link level between them ensure reliable data delivery, is a transport protocol offering reliable data delivery between these two end-systems necessary? Why? (R22)}
+
+Yes, the transport protocol does not only offer reliable data delivery, it also handles error and flow control.
+
+
+\subsubsection{What are the five layers in the Internet protocol stack? What are the principal responsibilities of each of these layers? (R23)}
+\begin{itemize}
+    \item Application layer: Responsible for handling the file that is being sent and how it is divided into packets. Examples of application layer protocols are HTTP, SMTP and FTP.
+    \item Transport layer: Responsible for handling packet loss and flow control. Examples of transport layer protocols are TCP and UDP.
+    \item Network layer: Contains routing protocols and are responsible for handling the where the packets are sent. There is only one network layer protocol, since all Internet components must run this protocol to to agree on how to handing routing of the packets, this protocol is called IP.
+    \item Link layer: Responsible for handling how the packets are sent on links. Examples of link layer protocols are Ethernet and WiFi.
+    \item Physical layer: Responsible for handling how the individual bits in a packet are sent on the physical medium they travel on. The physical layer protocols depends on the medium of the link. 
+\end{itemize}
+
+
+\subsubsection{What do encapsulation and de-encapsulation mean? Why are they needed in a layered protocol stack? (R24)}
+
+Encapsulation is the idea of hiding information from entities that does not need it. In relation to internet protocols this means that layers hide information from every other layer except the layer below them (which de-encapsulates the layer) because flow of certain information is needed from the layer above for it to perform its function. This is needed in a layered protocol stack to preserve the layered structure, it every layer had full information about every other layer, then the whole stack would melt together and the functionalities would no longer be divided. \\
+\\
+De-encapsulation is the idea of unpacking information for an entity that needs the otherwise encapsulated information. This is needed in a layered protocol stack, because if the layer below could not de-encapsulate information from the layer above, then it would not be able to perform its functionality, e.g. the transport layer could not handle packet loss and congestion if it did not the information about the packet sizes from the application layer.
+
+
+\subsubsection{Which layers in the Internet protocol stack does a router process? Which layers does a link-layer switch process? Which layers does a host process? (R25)}
+
+A router process the network, link and physical layers. A link-layer switch process the link and physical layers. A host process all layers.

@@ -1,0 +1,23 @@
+\subsection{Networks Under Attack}
+
+\subsubsection{What is self-replicating malware? (R26)}
+Malware that once present on a computer can download more malware on this computer or spread itself to other computers from the infected one.
+
+
+\subsubsection{Describe how a botnet can be created and how it can be used for a DDoS attack. (R27)}
+A botnet is created by spreading malware on several computers, so that the hacker can control all of these computers. These can be used for a DDoS attack in the following ways:
+\begin{itemize}
+    \item \textbf{Bandwidth flooding}: Sending so many packets to the targeted host, that the access link of the host becomes clogged, preventing legitimate packets from reaching the host.
+    \item \textbf{Connection flooding}: Sending repeated bogus requests for connection to the targeted host, causing the targeted host to stop accepting legitimate requests for connection.
+\end{itemize}
+
+
+
+\subsubsection{Suppose Alice and Bob are sending packets to each other over a computer network. Suppose Trudy positions herself in the network so that she can capture all the packets sent by Alice and send whatever she wants to Bob; she can also capture all the packets sent by Bob and send whatever she wants to Alice. List some of the malicious things Trudy can do from this position. (R28)}
+Trudy can do several malicious things, with the following being only a few examples:
+\begin{itemize}
+    \item She can quietly intercept all packets and "sniff" on the packet being sent, if she can decrypt them. Perhaps send them to a third party.
+    \item She can pretend to be Bob to Alice and pretend to be Alice to Bob, and send fake messages to both of them.
+    \item She can stop the packets from reaching either Bob or Alice or both and thus prevent their communication.
+    \item She can perform a combination of the above.
+\end{itemize}

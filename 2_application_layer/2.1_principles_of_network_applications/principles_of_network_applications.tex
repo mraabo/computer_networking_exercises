@@ -1,0 +1,70 @@
+\subsection{Principles of Network Applications}
+
+
+\subsubsection{List five nonproprietary Internet applications and the application-layer protocols
+that they use. (R1)}
+\begin{enumerate}
+    \item Websites: HTTP or HTTPS
+    \item File-transfer: FTP
+    \item Remote Login: Telnet
+    \item e-mail: SMTP
+    \item BitTorrent: BitTorrent Protocol
+\end{enumerate}
+
+
+\subsubsection{What is the difference between network architecture and application architecture? (R2)}
+The network architecture is the five-layer Internet architecture discussed in chapter 1, which defines how everything regarding end-to-end communication works over the Internet. Application architecture, on the other hand, defines how the application is structured over the various end systems and is designed by the application developer.
+
+
+\subsubsection{For a communication session between a pair of processes, which process is the client and which is the server? (R3)}
+The process that \textit{initiates} the communication is labeled as the client, while the process that waits to be contacted is called the server.
+
+
+\subsubsection{Why are the terms client and server still used in peer-to-peer applications? (R4)}
+To simplify the description of the communication. Even though the communicating entities can change from being the server and the client, this change of roles only happens when a new connection is established. In a P2P network the receiver of the file is the client while the sender of the file is the server. 
+
+
+\subsubsection{What information is used by a process running on one host to identify a process running on another host? (R5)}
+the IP address of the destination host and the port number of the socket in the destination process.
+
+
+\subsubsection{What is the role of HTTP in a network application? What other components are needed to complete a Web application? (R6)}
+HTTP defines the format and sequence of messages exchanged between browser and Web server. Other component like a server that stores the files available from the web-application or manages billing etc., might be other important components of a Web application.
+
+
+\subsubsection{Referring to Figure 2.4, we see that none of the applications listed in Figure 2.4 requires both no data loss and timing. Can you conceive of an application that requires no data loss and that is also highly time-sensitive? (R7)}
+High-frequency trading software, since it only profits from small variations in a time series, that it must evaluate and trade on in real-time, thus requiring both timing and no data loss.
+
+
+\subsubsection{List the four broad classes of services that a transport protocol can provide. For each of the service classes, indicate if either UDP or TCP (or both) provides such a service. (R8)}
+
+\begin{itemize}
+    \item \textbf{Reliable data transfer}: TCP provides a reliable byte-stream but UDP does not.
+    \item \textbf{Throughput}: Neither TCP Nor UDP guarantees that a certain value of throughput is maintained.
+    \item \textbf{Timing}: Neither TCP nor UDP guarantees that packets/bytes arrive with a specific timing.
+    \item \textbf{Security}: Neither TCP nor UDP provides any security measures like encrypting the message.
+\end{itemize}
+
+\subsubsection{Recall that TCP can be enhanced with TLS to provide process-to-process security services, including encryption. Does TLS operate at the transport layer or the application layer? If the application developer wants TCP to be enhanced with TLS, what does the developer have to do? (R9)}
+
+TLS is an enhancement of TCP, but with the enhancements being implemented in the application layer, as it offers encryption of the application itself. For a developer to enhance TCP with TLS he will have to include TLS code in both the client and server side of the application, as both sides needs to be able to encrypt and decrypt the application.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
