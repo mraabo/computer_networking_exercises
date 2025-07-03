@@ -1048,7 +1048,7 @@ Sending at link capacity will mean that
     W &= \frac{RTT}{MSS} 54 \, \text{Mbps}
 \end{split}
 \end{equation*}
-We have that $MSS = 536 \cdot 8$ bits and that $RTT = 2 \cdot 6 \cdot 10^{-3}$ seconds. Inserting these values we can determine $W$ by
+We have that $MSS = 536 \cdot 8$ bits and assuming negligible processing- and queuing delay we hat have that $RTT = 12 \cdot 10^{-3}$ seconds, which is the two times the two-way propagation delay (one for each side of the link). Inserting these values we can determine $W$ by
 \begin{equation*}
 \begin{split}
     W &= \frac{12 \cdot 10^{-3} \, \text{s}}{536 \cdot 8 \, \text{bits}} 54 \cdot 10^6 \, \text{bits/s} \\
@@ -1077,8 +1077,51 @@ since the window size increases by 1 MSS every RTT.
 
 \subsubsection{Consider the scenario described in the previous problem. Suppose that the 10 Mbps link can buffer a finite number of segments. Argue that in order for the link to always be busy sending data, we would like to choose a buffer size that is at least the product of the link speed C and the two-way propagation delay between the sender and the receiver. (P49)}
 
+In TCP's sliding window protocol, multiple segments can be transmitted before receiving acknowledgements. During the round-trip time $RTT$, the sender can transmit up to $C \times RTT$ bits of data while waiting for acknowledgements from previously sent segments. \\
+\\
+If the buffer size is less than $C \times RTT$, then after transmitting all buffered data, the sender must wait for acknowledgements before it can send more data, which creates idle time on the link. However, if the buffer size is at least $C \times RTT$, there will always be sufficient data available to transmit during the acknowledgement delay period, which ensures the link remains continuously busy.\\
+\\
+Therefore, the minimum buffer size required is:
+$$\text{Buffer size} \geq C \times RTT$$
 
 \subsubsection{Repeat Problem 48, but replacing the 54 Mbps link with a 100 Gbps link and an RTT of 60 ms. Note that in your answer to part c, you will realize that it takes a very long time for the congestion window size to reach its maximum window size after recovering from a packet loss. Can you consider solutions for this? (P50)}
+
+\textbf{a. What is the maximum window size (in segments) that this TCP connection can achieve?} \\
+As before we have that since the receiver buffer is larger than the congestion window then packet loss can only occur in the link, which happens as soon as queuing occurs since it does not buffer. Therefore the maximum window size must be set so the hosts do not send faster than the link's capacity. \\
+\\
+Sending at link capacity will mean that 
+\begin{equation*}
+\begin{split}
+    \frac{W \cdot MSS}{RTT} &= 100 \, \text{Gbps} \\
+    W &= \frac{RTT}{MSS} 100 \, \text{Gbps}
+\end{split}
+\end{equation*}
+We have that $MSS = 536 \cdot 8$ bits and assuming negligible processing- and queuing delay we hat have that $RTT = 120 \cdot 10^{-3}$ seconds, which is the two times the two-way propagation delay (one for each side of the link). Inserting these values we can determine $W$ by
+\begin{equation*}
+\begin{split}
+    W &= \frac{120 \cdot 10^{-3} \, \text{s}}{536 \cdot 8 \, \text{bits}} 100 \cdot 10^9 \, \text{bits/s} \\
+    &= 2798507.46
+\end{split}
+\end{equation*}
+Flooring this value to make in an integer that does not go over the link capacity results in a maximum window size of $W = 2798507$ MSS. \\
+\\
+\textbf{b. What is the average window size (in segments) and average throughput (in bps) of this TCP connection?} \\
+We have that the window will vary from $W/2$ (which is set on loss and increase linearly) to $W$. The average window size is therefore 
+\begin{equation*}
+    \overline{W} = \frac{W/2 + W}{2} = \frac{W}{4} + \frac{W}{2} = \frac{3}{4} W = \frac{3}{4} 2798507 = 2098880.25
+\end{equation*}
+\\
+The average throughput $\overline{T}$ will can be expressed by
+\begin{equation*}
+    \overline{T} = \frac{\overline{W} \cdot MSS}{RTT} = \frac{2098880.25 \cdot 536 \cdot 8 \, \text{bits}}{120 \cdot 10^{-3} \, \text{s}} = 74999.9876 \cdot 10^6 \, \text{bits/s}
+\end{equation*}
+\\
+\textbf{c. How long would it take for this TCP connection to reach its maximum window again after recovering from a packet loss?} \\
+This is equivalent to the time it takes to increase the window size from $W/2$ to $W$ which can be expressed as
+\begin{equation*}
+    \lr{W - W/2} RTT = W/2 \cdot RTT  = \frac{2798507}{2} \cdot 120 \cdot 10^{-3} \, \text{s} = 167910.42 \, \text{s}
+\end{equation*}
+since the window size increases by 1 MSS every RTT. As the problem description states, this is indeed a long time. A solution could be to use TCP Cubic instead.
 
 
 \subsubsection{Let $T$ (measured by RTT) denote the time interval that a TCP connection takes to increase its congestion window size from $W/2$ to $W$, where $W$ is the maximum congestion window size. Argue that $T$ is a function of TCP's  average throughput. (P51)}
@@ -1126,3 +1169,8 @@ If someone was spoofind the Y address then they would not receive the SYNACK, wh
 \textbf{b. $S/R + RTT > 4 S/R$} \\
 \\
 \textbf{c. $S/R > RTT$} \\
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "../../kr"
+%%% End:
