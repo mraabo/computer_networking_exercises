@@ -1030,9 +1030,10 @@ and express $W$ by
 \end{split}
 \end{equation*}
 We have that \cite{kr} states that in exactly these settings we have that the average throughput is $\frac{3}{4}W/RTT$, inserting our value for $W$ (which is in the units of MSS) we get
-\begin{equation*}
-    \frac{\frac{3}{4} \sqrt{\frac{8}{3L}} MSS}{RTT} = \frac{\frac{3}{4} \sqrt{\frac{8}{3}} \frac{1}{\sqrt{L}} MSS}{RTT} = \frac{1.22 MSS}{RTT \sqrt{L}}
-\end{equation*}
+\begin{equation}
+  \label{eq:avg_throughput_with_loss}
+    \overline{T} = \frac{\frac{3}{4} \sqrt{\frac{8}{3L}} MSS}{RTT} = \frac{\frac{3}{4} \sqrt{\frac{8}{3}} \frac{1}{\sqrt{L}} MSS}{RTT} = \frac{1.22 MSS}{RTT \sqrt{L}}
+\end{equation}
 
 
 
@@ -1063,7 +1064,7 @@ We have that the window will vary from $W/2$ (which is set on loss and increase 
     \overline{W} = \frac{W/2 + W}{2} = \frac{W}{4} + \frac{W}{2} = \frac{3}{4} W = \frac{3}{4} 151 = 113.25
 \end{equation*}
 \\
-The average throughput $\overline{T}$ will can be expressed by
+The average throughput $\overline{T}$ can be expressed by
 \begin{equation*}
     \overline{T} = \frac{\overline{W} \cdot MSS}{RTT} = \frac{113.25 \cdot 536 \cdot 8 \, \text{bits}}{12 \cdot 10^{-3} \, \text{s}} = 40.468 \cdot 10^6 \, \text{bits/s}
 \end{equation*}
@@ -1124,25 +1125,116 @@ This is equivalent to the time it takes to increase the window size from $W/2$ t
 since the window size increases by 1 MSS every RTT. As the problem description states, this is indeed a long time. A solution could be to use TCP Cubic instead.
 
 
-\subsubsection{Let $T$ (measured by RTT) denote the time interval that a TCP connection takes to increase its congestion window size from $W/2$ to $W$, where $W$ is the maximum congestion window size. Argue that $T$ is a function of TCP's  average throughput. (P51)}
+\subsubsection{Let $T$ (measured by RTT) denote the time interval that a TCP connection takes to increase its congestion window size from $W/2$ to $W$, where $W$ is the maximum congestion window size. Argue that $T$ is a function of TCP's average throughput. (P51)}
+
+From equation \ref{eq:avg_throughput_with_loss} we have that
+\begin{equation*}
+  \begin{split}
+    \overline{T} &= \frac{1.22 \cdot MSS}{RTT \sqrt{L}} \Longleftrightarrow \\
+    \overline{T} \cdot RTT \cdot \sqrt{L} &= 1.22 \cdot MSS \Longleftrightarrow \\
+    \sqrt{L} &= \frac{1.22 \cdot MSS}{\overline{T} \cdot RTT} \Longleftrightarrow \\
+    L &= \lr{\frac{1.22 \cdot MSS}{\overline{T} \cdot RTT}}^2
+  \end{split}
+\end{equation*}
+with $L$ being the loss rate, i.e. lost packet per packets sent. Therefore we must have that on average we send $1/L$ packets between two consecutive packet losses. We have that on average we send $MSS/\overline{T}$ packets per RTT, and increase the windows size by 1 MSS for each packet sent without packet loss. We must therefore have that the time in RTT it takes for the window size to double is expected to be
+\begin{equation*}
+  T = 1/L \cdot \frac{MSS}{\overline{T}}  
+\end{equation*}
+Inserting $L$ we get
+\begin{equation*}
+  \begin{split}
+    T &= \frac{1}{ \lr{\frac{1.22 \cdot MSS}{\overline{T} \cdot RTT}}^2} \frac{MSS}{\overline{T}}  \\
+    &= \frac{\overline{T}^2 \cdot RTT^2}{1.22^2 \cdot MSS^2} \frac{MSS}{\overline{T}} \\
+    &= \frac{RTT^2 \cdot \overline{T}}{1.22^2 \cdot MSS}
+  \end{split}
+\end{equation*}
+which shows $T$ as a function of average throughput $\overline{T}$ for TCP (Reno).
 
 
 \subsubsection{Consider a simplified TCP's AIMD algorithm where the congestion window size is measured in number of segments, not in bytes. In additive increase, the congestion window size increases by one segment in each RTT. In multiplicative decrease, the congestion window size decreases by half (if the result is not an integer, round down to the nearest integer). Suppose that two TCP connections, C1 and C2, share a single congested link of speed 30 segments per second. Assume that both C1 and C2 are in the congestion avoidance phase. Connection C1's RTT is 50 msec and connection C2's RTT is 100 msec. Assume that when the data rate in the link exceeds the link's speed, all  TCP connections experience data segment loss. (P52)}
 
 \textbf{a. If both $C_1$ and $C_2$ at time $t_0$ have a congestion window of 10 segments, what are their congestion window sizes after 1000 msec?} \\
+The congestion window will increase with one segment per received ACK, which for C1 is every 50 msec and for C2 every 100 msec. When the sum of window sizes exceeds 30 both connections will experience a loss after RTT where they will halve their window sizes. This means that the window size will follow the development shown in table below where it is shown in red when the sum of segments on the link exceeds 30. \\
+\begin{center}
+\begin{tabular}{ccc}
+  \hline
+  Time (msec) & C1 window size (segments) & C2 window size (segments) \\
+  \hline
+  0 & 10 & 10 \\
+  50 & 11 & 10 \\
+  100 & 12 & 11 \\
+  150 & 13 & 11 \\
+  200 & 14 & 12 \\
+  250 & 15 & 12 \\
+  300 & 16 & 13 \\
+  350 & 17 & 13 \\
+  400 & \textcolor{red}{18} & \textcolor{red}{14} \\
+  450 & 9 & 14 \\
+  500 & 10 & 7 \\
+  550 & 11 & 7 \\
+  600 & 12 & 8 \\
+  650 & 13 & 8 \\
+  700 & 14 & 9 \\
+  750 & 15 & 9 \\
+  800 & 16 & 10 \\
+  850 & 17 & 10 \\
+  900 & 18 & 11 \\
+  950 & 19 & 11 \\
+  1000 & \textcolor{red}{20} & \textcolor{red}{12} \\
+  \hline
+\end{tabular}
+\end{center}
+Here we see that the window sizes at 1000 msec is 20 for C1 and 12 for C2. Even though the link speed is exceeded at this time none of them have yet experienced that a loss have happened. \\
 \\
-\textbf{b. In the long run, will these two connections get the same share of the band-width of the congested link? Explain.}
+\textbf{b. In the long run, will these two connections get the same share of the band-width of the congested link? Explain.} \\
+No, as seen in the table of part a, C1 will have a head start on C2 since it will increase its window size faster and thus have the largest size when a loss occur for which both connections will half their sizes, and C1 have the largest window size after the halving. C1 will after this loss again increase faster and have an even larger proportion of the the bandwidth when a loss again occurs. In this way C2 will increase its share of the bandwidth until an equilibrium is reached from which C1 can never hope to reach half of the bandwidth.
 
 
 \subsubsection{Consider the network described in the previous problem. Now suppose that the two TCP connections, C1 and C2, have the same RTT of 100 msec.  Suppose that at time $t_0$, C1's congestion window size is 15 segments but C2's congestion window size is 10 segments. (P53)}
 
 \textbf{a. What are their congestion window sizes after 2200 msec?} \\
+Both C1 and C2 will increase their window sizes with 1 segment every 100 msec and will both halve the window size when the sum of window sizes exceeds 30 segments. Both connections will know a loss occurred 100 msec after. This means that the development of the window sizes of C1 and C2 can be shown as the table below.
+\begin{center}
+  \begin{tabular}{ccc}
+    \hline
+    Time (msec) & C1 window size (segments) & C2 window size (segments) \\
+    \hline
+    0 & 15 & 10 \\
+    100 & 16 & 11 \\
+    200 & 17 & 12 \\
+    300 & \textcolor{red}{18} & \textcolor{red}{13} \\
+    400 & 7 & 6 \\
+    500 & 8 & 7 \\
+    600 & 9 & 8 \\
+    700 & 10 & 9 \\
+    800 & 11 & 10 \\
+    900 & 12 & 11 \\
+    1000 & 13 & 12 \\
+    1100 & 14 & 13 \\
+    1200 & 15 & 14 \\
+    1300 & \textcolor{red}{16} & \textcolor{red}{15} \\
+    1400 & 8 & 7 \\
+    1500 & 9 & 8 \\
+    1600 & 10 & 9 \\
+    1700 & 11 & 10 \\
+    1800 & 12 & 11 \\
+    1900 & 13 & 12 \\
+    2000 & 14 & 13 \\
+    2100 & 15 & 14 \\
+    2200 & \textcolor{red}{16} & \textcolor{red}{15} \\
+    \hline
+  \end{tabular}
+\end{center}
+Where we see that the window size at 2200 msec is 16 for C1 and 15 for C2. \\
 \\
 \textbf{b. In the long run, will these two connections get about the same share of the bandwidth of the congested link?} \\
+Close to equal share but never exact. We can see this from the table in part a, where there is an infinite pattern in how the connections experience loss when C1 has window size 16 and C2 15. This occurs because we round down, which makes C1 have size 8 and C2 size 7 after a loss. Since they both increase at the same rate C2 will never catch up to C1 (which it could have we decided to round up to nearest integer when halving the window size). \\
 \\
 \textbf{c. We say that two connections are synchronized, if both connections reach their maximum window sizes at the same time and reach their minimum window sizes at the same time. In the long run, will these two connections get synchronized eventually? If so, what are their maximum window sizes?} \\
+No, they are not. As argued in part b there is an infinite pattern in which, after 1300 msec the window size of C1 is never increased above 16 and the window size of C2 is never increased above 15. C1 reaches its max at 300 msec with a size of 18, but C2 reaches its max at 1300 msec and every 900 msec with a size of 15.\\
 \\
 \textbf{d. Will this synchronization help to improve the utilization of the shared link? Why? Sketch some idea to break this synchronization.} \\
+No. These connections oscillate between a lower and higher window size just like a single connection would. The link is therefore not utilised after a loss. A way to improve this and break synchronisation would be to add a finite buffer to the link that prior to buffer overflow randomly drops packets. This would add asynchronous handling of loss in the connection even though they increase their window size at the same rate, which in turn will make it possible for one connection to keep increasing their window size (this utilising the link) when another has halved its window size after experiencing loss.
 
 
 \subsubsection{Consider a modification to TCP's congestion control algorithm. Instead of additive increase, we can use multiplicative increase. A TCP sender increases its window size by a small positive constant a (0 < a < 1) whenever it receives a valid ACK. Find the functional relationship between loss rate L and maximum congestion window $W$. Argue that for this modified TCP, regardless of TCP's average throughput, a TCP connection always spends the same amount of time to increase its congestion window size from $W/2$ to $W$. (P54)}
