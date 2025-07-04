@@ -1237,7 +1237,37 @@ No, they are not. As argued in part b there is an infinite pattern in which, aft
 No. These connections oscillate between a lower and higher window size just like a single connection would. The link is therefore not utilised after a loss. A way to improve this and break synchronisation would be to add a finite buffer to the link that prior to buffer overflow randomly drops packets. This would add asynchronous handling of loss in the connection even though they increase their window size at the same rate, which in turn will make it possible for one connection to keep increasing their window size (this utilising the link) when another has halved its window size after experiencing loss.
 
 
-\subsubsection{Consider a modification to TCP's congestion control algorithm. Instead of additive increase, we can use multiplicative increase. A TCP sender increases its window size by a small positive constant a (0 < a < 1) whenever it receives a valid ACK. Find the functional relationship between loss rate L and maximum congestion window $W$. Argue that for this modified TCP, regardless of TCP's average throughput, a TCP connection always spends the same amount of time to increase its congestion window size from $W/2$ to $W$. (P54)}
+\subsubsection{Consider a modification to TCP's congestion control algorithm. Instead of additive increase, we can use multiplicative increase. A TCP sender increases its window size by a small positive constant a $(0 < a < 1)$ whenever it receives a valid ACK. Find the functional relationship between loss rate L and maximum congestion window $W$. Argue that for this modified TCP, regardless of TCP's average throughput, a TCP connection always spends the same amount of time to increase its congestion window size from $W/2$ to $W$. (P54)}
+
+
+We have that the number of times we must multiply a number by $1+a$, to double it, is $\log_{1+a}2$. \\
+\\
+Let $s$ be the number of segments that is sent while the congestion window grows from $W/2$ up to an including $W$, then we can express it as
+\begin{equation*}
+  s = W/2 + W/2 (1+a) + W/2 (1+a)^2 + W/2 (1+a)^3 + \cdots + W/2 (1+a)^{\log_{1+a} 2}
+\end{equation*}
+Factoring out $W/2$ and using the rule for geometric sequences we have
+\begin{equation*}
+  \begin{split}
+    s &= W/2 \frac{(1+a)^{\log_{1+a} 2 + 1} - 1}{1 + a - 1} \\
+      &= W/2 \frac{(1+a)^{\log_{1+a} 2} (1+a) - 1}{a} \\
+      &= W/2 \frac{2(1+a) - 1}{a} \\
+      &= W/2 \frac{2 + 2a - 1}{a} \\
+      &= W/2 \frac{2a + 1}{a} \\
+      &= W \frac{2a + 1}{2a}
+  \end{split}
+\end{equation*}
+Since one loss occur after $s$ segments are sent, we have that the loss rate is
+\begin{equation*}
+  \begin{split}
+    L &= \frac{1}{s} \\
+      &= \frac{1}{\frac{W(2a + 1)}{2a}} \\
+      &= \frac{2a}{W(2a + 1)}
+  \end{split}
+\end{equation*}
+which shows the relationship between loss rate $L$ and maximum congestion window $W$. \\
+\\
+The time it takes to increase the size from $W/2$ to $W$ is the number of ACKs to receive, which as stated above is $\log_{1+a}2$, times the time it takes to receive each ACK, which is the RTT. So the time can be expressed as $RTT \log_{1+a}2$ which is independent of the average throughput.
 
 
 \subsubsection{In our discussion of TCP futures in Section 3.7, we noted that to achieve a throughput of 10 Gbps, TCP could only tolerate a segment loss probability of $2 \cdot 10^{-10}$ (or equivalently, one loss event for every 5,000,000,000 segments). Show the derivation for the values of $2 \cdot 10^{-10}$ (1 out of 5,000,000) for the RTT and MSS values given in Section 3.7. If TCP needed to support a  100 Gbps connection, what would the tolerable loss be? (P55)}
